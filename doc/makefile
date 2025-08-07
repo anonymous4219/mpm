@@ -22,22 +22,11 @@ paper.pdf:  paper.dtx   $(PACKAGE).cls
 	while ( grep -q '^LaTeX Warning: Label(s) may have changed' paper.log) \
 	do pdflatex paper; done
 
-docclean:
+clean:
 	$(RM)  *.log *.aux \
 	*.cfg *.glo *.idx *.toc \
 	*.ilg *.ind *.out *.lof \
 	*.lot *.bbl *.blg *.gls *.cut *.hd \
 	*.dvi *.ps *.thm *.tgz *.zip *.rpi \
-	samples/$(PACKAGE).cls \
-	samples/$(PACKAGE)-tagged.cls \
-	samples/ACM-Reference-Format.bst \
-	samples/*.log samples/*.aux samples/*.out \
-	samples/*.bbl samples/*.blg samples/*.cut samples/*.toc \
-	samples/acm-jdslogo.png \
-	samples/*.run.xml samples/*.bcf $(SAMPLEBIBLATEXFILES)
 
-
-clean: docclean
-	$(RM)  $(PACKAGE).cls $(PACKAGE)-tagged.cls \
-	samples/*.tex
 
