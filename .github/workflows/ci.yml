@@ -1,0 +1,20 @@
+name: ci
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: install verilator
+        run: sudo apt install verilator
+
+      - name: run tests
+        run: make sim
