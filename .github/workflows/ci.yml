@@ -17,4 +17,4 @@ jobs:
         run: sudo apt install verilator
 
       - name: run tests
-        run: make sim
+        run: make sim | grep -q Passed
