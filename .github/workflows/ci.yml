@@ -14,7 +14,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: install verilator
-        run: apt install verilator
+        run: sudo apt install verilator
 
       - name: run tests
         run: make sim
