@@ -1,3 +1,3 @@
 sim:
-	verilator --binary *.sv
-	obj_dir/Vbidirectional_xor_memory_tb
+	verilator --binary xor_memory_tb.sv xor_memory.sv
+	obj_dir/Vxor_memory_tb
