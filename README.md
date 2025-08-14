@@ -1,4 +1,6 @@
-# bidirectional-xor-memory
+# xor-memory
+
+Xor memory is a type of memory that uses the property a xor b xor b = a.
 
 ## Contributing
 
