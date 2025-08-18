@@ -22,7 +22,7 @@
 
 \begin{document}
 
-\title{Bi-directional XOR Memories for FPGAs}
+\title{Yet Another Multi-Port Memory for FPGAs}
 
 %%
 %% The "author" command and its associated commands are used to define
@@ -37,6 +37,8 @@
 
 \begin{abstract}
   We propose a simple extention to XOR memories presented in previous work.
+In this paper we generalize the XOR memory. We explore the resource usage on Xilinx/AMD
+FPGAs.
 \end{abstract}
 
 %%
@@ -98,7 +100,62 @@
 %% information and builds the first part of the formatted document.
 \maketitle
 
+\section{Motivation}
+
+As computation needs keep increasing with Moore's Law one way to keep up has been
+specialized architectures. FPGAs provide a way to implement architectures without taping out an ASIC.
+However, the limitations of FPGA resources means some creativity is needed to map designs to FPGAs.
+This paper explores the limitation of FPGAs in the fact that FPGA memories have a limited number of
+ports. Specifically we look at creating memories with more than 2 ports.
+
+The 3 major FPGA vendors implement distributed memory (small memories) and block memory (large memories)
+differently, however they share some characteristics.
+
+All 3 vendors support distributed memory configurations with 1 full port and up to 3 read ports.
+
+All 3 vendors support block memory with 2 full ports.
+
+\section{Source Code}
+We provide all of the source code used in implementation and testing our design at
+github.com/kevintownsend/mpm. We tested our design with Verilator and implemented the design
+with Vivado (Xilinx/AMD).
+
 \section{Introduction}
+
+We propose a simple generalization to XOR memories presented in previous work.
+XOR memories work by using the a xor b xor b = a property. We add bidirectional
+ports and analyze the perforamance of distributed memory and block memory
+versions of this design. We also present applications for these memories.
+
+We also present a LVT memory that utizazes distrubuted memory xor live value table.
+
+\section{Live Value Table Memory}
+
+In (TODO citation) the live value table was implemented with registers. Previous work used
+distributed memory (TODO citation). However they did not use bidirectional xor ports in their implementation.
+
+We create a LVT memory using the technique described in (TODO cititaion). TODO: describe technique.
+
+We show we utilize x\% less resources than LVT and I-LVT.
+
+\section{Impractical Designs}
+
+We obviously wanted to explore impractical designs with large numbers of ports. We say
+impractical because of the high resource usage of XOR and LVT memories at high port counts.
+N**2 for XOR and N*(N-1)/2 for LVT. However we were able to synthesize a 16 port memory.
+
+Without write delay the design runs at Xmhz (x\% of max). With write delay and pipelining the design runs at Xmhz.
+
+\section{Conclusion}
+Several solutions to the port limit on FPGAs other than what is presented here.
+For example multi-pumping and banking. multi-pumping is the process of reducing
+the clock speed to increase the number of ports. For example a 300Mhz single
+port memory can handle 2 150Mhz ports. Banking requires stalls and routing logic
+due to the segmented memory. Our design uses replication and some creativity
+XOR and LVT to create multiple ports.
+
+\section{Introduction}
+
 ACM's consolidated article template, introduced in 2017, provides a
 consistent \LaTeX\ style for use across ACM publications, and
 incorporates accessibility and metadata-extraction functionality

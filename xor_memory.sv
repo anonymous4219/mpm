@@ -1,12 +1,13 @@
-module xor_memory(clk, addr, d, en, q);
-  parameter WIDTH = 8;
-  parameter DEPTH = 256;
-  parameter PORTS = 2;
-  input clk;
-  input [$clog2(DEPTH)-1:0]addr[PORTS-1:0];
-  input [WIDTH-1:0]d[PORTS-1:0];
-  input en[PORTS-1:0];
-  output logic [WIDTH-1:0]q[PORTS-1:0];
+module xor_memory #(
+  parameter WIDTH = 8,
+  parameter DEPTH = 256,
+  parameter PORTS = 2)(
+
+  input clk,
+  input [$clog2(DEPTH)-1:0]addr[PORTS-1:0],
+  input [WIDTH-1:0]d[PORTS-1:0],
+  input en[PORTS-1:0],
+  output logic [WIDTH-1:0]q[PORTS-1:0]);
 
   logic [WIDTH-1:0]ram_output[PORTS-1:0][PORTS-1:0];
 
@@ -46,15 +47,15 @@ module xor_memory(clk, addr, d, en, q);
 
 endmodule // xor_memory
 
-module simple_ram(clk, addr_d, d, en, addr_q, q);
-  parameter WIDTH = 8;
-  parameter DEPTH = 256;
-  input clk;
-  input [$clog2(DEPTH)-1:0]addr_d;
-  input [WIDTH-1:0]d;
-  input en;
-  input [$clog2(DEPTH)-1:0]addr_q;
-  output reg [WIDTH-1:0]q;
+module simple_ram #(//clk, addr_d, d, en, addr_q, q);
+  parameter WIDTH = 8,
+  parameter DEPTH = 256)(
+  input clk,
+  input [$clog2(DEPTH)-1:0]addr_d,
+  input [WIDTH-1:0]d,
+  input en,
+  input [$clog2(DEPTH)-1:0]addr_q,
+  output reg [WIDTH-1:0]q);
 
   reg [WIDTH-1:0]ram[DEPTH-1:0];
 
