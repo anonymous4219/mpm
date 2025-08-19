@@ -47,7 +47,7 @@ module xor_memory #(
 
 endmodule // xor_memory
 
-module simple_ram #(//clk, addr_d, d, en, addr_q, q);
+module simple_ram #(
   parameter WIDTH = 8,
   parameter DEPTH = 256)(
   input clk,
