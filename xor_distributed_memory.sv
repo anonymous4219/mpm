@@ -1,4 +1,4 @@
-module xor_memory #(
+module xor_distributed_memory #(
   parameter WIDTH = 8,
   parameter DEPTH = 256,
   parameter PORTS = 2)(
@@ -12,16 +12,6 @@ module xor_memory #(
   logic [WIDTH-1:0]ram_output[PORTS-1:0][PORTS-1:0];
 
   logic [WIDTH-1:0]partial_xor_input[PORTS-1:0];
-
-  logic [$clog2(DEPTH)-1:0]addr_buffered[PORTS-1:0];
-  logic [WIDTH-1:0]d_buffered[PORTS-1:0];
-  logic en_buffered[PORTS-1:0];
-
-  always @(posedge clk) begin
-    addr_buffered <= addr;
-    d_buffered <= d;
-    en_buffered <= en;
-  end
 
   integer i, j;
   always_comb begin
@@ -40,14 +30,14 @@ module xor_memory #(
   generate
     for(gi = 0; gi < PORTS; gi = gi + 1) begin
       for(gj = 0; gj < PORTS; gj = gj + 1) begin
-        simple_ram #(WIDTH, DEPTH) gen_ram(clk, addr_buffered[gi], d_buffered[gi] ^ partial_xor_input[gi], en_buffered[gi], addr[gj], ram_output[gi][gj]);
+        simple_distributed_ram #(WIDTH, DEPTH) gen_ram(clk, addr[gi], d[gi] ^ partial_xor_input[gi], en[gi], addr[gj], ram_output[gi][gj]);
       end
     end
   endgenerate
 
-endmodule // xor_memory
+endmodule // xor_distributed_memory
 
-module simple_ram #(//clk, addr_d, d, en, addr_q, q);
+module simple_distributed_ram #(
   parameter WIDTH = 8,
   parameter DEPTH = 256)(
   input clk,
@@ -55,7 +45,7 @@ module simple_ram #(//clk, addr_d, d, en, addr_q, q);
   input [WIDTH-1:0]d,
   input en,
   input [$clog2(DEPTH)-1:0]addr_q,
-  output reg [WIDTH-1:0]q);
+  output logic [WIDTH-1:0]q);
 
   reg [WIDTH-1:0]ram[DEPTH-1:0];
 
@@ -63,7 +53,9 @@ module simple_ram #(//clk, addr_d, d, en, addr_q, q);
     if(en) begin
       ram[addr_d] <= d;
     end
-    q <= ram[addr_q];
+  end
+  always_comb begin
+    q = ram[addr_q];
   end
 
-endmodule // simple_ram
+endmodule // simple_distributed_ram
