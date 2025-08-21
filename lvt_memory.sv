@@ -10,8 +10,9 @@ module lvt_memory #(
   output logic [WIDTH-1:0]q[PORTS-1:0]
 );
 
-// TODO(kevintownsend): complete.
+/* verilator lint_off UNOPTFLAT */
 logic [WIDTH-1:0]intermediate_output[PORTS-1:0][PORTS-1:0];
+/* verilator lint_on UNOPTFLAT */
 
 genvar gi, gj;
 
@@ -35,7 +36,7 @@ generate
   end
 endgenerate
 
-// TODO: intermediate output diagonal.
+// Intermediate output diagonal.
 integer i;
 /* verilator lint_off ALWCOMBORDER */
 always_comb begin
@@ -64,7 +65,10 @@ xor_distributed_memory #($clog2(PORTS), DEPTH, PORTS) lvt(
   lvt_output
 );
 
-// TODO: xor memory
-// TODO: mux
+always_comb begin
+  for(int k = 0; k < PORTS; k++) begin
+    q[k] = intermediate_output[k][lvt_output[k]];
+  end
+end
 
 endmodule // lvt_memory

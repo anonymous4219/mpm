@@ -18,7 +18,7 @@ module dual_port_memory #(
     if(en_a) begin
       ram[addr_a] <= d_a;
     end
-    if(en_a) begin
+    if(en_b) begin
       ram[addr_b] <= d_b;
     end
     q_a <= ram[addr_a];

@@ -38,9 +38,10 @@ lvt_memory #(WIDTH, DEPTH, PORTS) dut(
     d[0] = 0;
     #10
     addr[1] = 5;
-    #10
+    #20
     if(q[1] != 42) begin
-      $display("FAILED");
+      $display("FAILED: expected 42, was: %d", q[1]);
+      $display("debug: %d", q[0]);
       $finish();
     end
     #100 $display("Passed");
