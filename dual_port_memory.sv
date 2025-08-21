@@ -3,12 +3,12 @@ module dual_port_memory #(
   parameter DEPTH = 256)(
   input clk,
   input [$clog2(DEPTH)-1:0]addr_a,
-  input [WIDTH-1:0]d_a,
   input en_a,
+  input [WIDTH-1:0]d_a,
   output logic [WIDTH-1:0]q_a,
   input [$clog2(DEPTH)-1:0]addr_b,
-  input [WIDTH-1:0]d_b,
   input en_b,
+  input [WIDTH-1:0]d_b,
   output logic [WIDTH-1:0]q_b
   );
 
