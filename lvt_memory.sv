@@ -36,7 +36,35 @@ generate
 endgenerate
 
 // TODO: intermediate output diagonal.
-// TODO: mux
+integer i;
+/* verilator lint_off ALWCOMBORDER */
+always_comb begin
+  intermediate_output[0][0] = intermediate_output[1][0];
+  for(i = 1; i < PORTS; i++) begin
+    intermediate_output[i][i] = intermediate_output[i-1][i];
+  end
+end
+/* verilator lint_on ALWCOMBORDER */
+
+logic [$clog2(PORTS)-1:0]port_numbers[PORTS-1:0];
+integer j;
+initial begin
+  for(j=0; j < PORTS; j++) begin
+    port_numbers[j] = j[$clog2(PORTS)-1:0];
+  end
+end
+
+logic [$clog2(PORTS)-1:0] lvt_output[PORTS-1:0];
+
+xor_distributed_memory #($clog2(PORTS), DEPTH, PORTS) lvt(
+  clk,
+  addr,
+  port_numbers,
+  en,
+  lvt_output
+);
+
 // TODO: xor memory
+// TODO: mux
 
 endmodule // lvt_memory
