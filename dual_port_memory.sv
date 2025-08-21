@@ -3,12 +3,12 @@ module dual_port_memory #(
   parameter DEPTH = 256)(
   input clk,
   input [$clog2(DEPTH)-1:0]addr_a,
-  input [WIDTH-1:0]d_a,
   input en_a,
+  input [WIDTH-1:0]d_a,
   output logic [WIDTH-1:0]q_a,
   input [$clog2(DEPTH)-1:0]addr_b,
-  input [WIDTH-1:0]d_b,
   input en_b,
+  input [WIDTH-1:0]d_b,
   output logic [WIDTH-1:0]q_b
   );
 
@@ -18,7 +18,7 @@ module dual_port_memory #(
     if(en_a) begin
       ram[addr_a] <= d_a;
     end
-    if(en_a) begin
+    if(en_b) begin
       ram[addr_b] <= d_b;
     end
     q_a <= ram[addr_a];
