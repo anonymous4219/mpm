@@ -27,6 +27,6 @@ clean:
 	*.cfg *.glo *.idx *.toc \
 	*.ilg *.ind *.out *.lof \
 	*.lot *.bbl *.blg *.gls *.cut *.hd \
-	*.dvi *.ps *.thm *.tgz *.zip *.rpi \
+	*.dvi *.ps *.thm *.tgz *.zip *.rpi paper.pdf
 
 
