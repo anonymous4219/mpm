@@ -2,6 +2,7 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric}
 \usetikzlibrary{matrix}
+\usepackage{environ}
 %%
 %% \BibTeX command to typeset BibTeX logo in the docs
 \AtBeginDocument{%
@@ -87,15 +88,19 @@ FPGAs.
 %% information and the body of the document, and typically spans the
 %% page.
 \begin{teaserfigure}
-  \includegraphics[width=\textwidth]{sampleteaser}
-  \begin{tikzpicture}
-  \node [trapezium, trapezium left angle=70, trapezium right angle=110, draw]{RAM};
+  %\includegraphics[width=\textwidth]{sampleteaser}
+  \begin{center}
+  \begin{tikzpicture}[scale=2]
+  \foreach \x in {0,1,2,3,4,5} {
+    \node [trapezium, trapezium left angle=70, trapezium right angle=110, draw] at (\x, 0){RAM};
+  }
   %TODO: draw 2d array of nodes.
   %TODO: draw xor of read ports
   %TODO: draw ports
   %TODO: draw xor of write ports
   %TODO: draw xor of full ports
   \end{tikzpicture}
+  \end{center}
   \caption{Seattle Mariners at Spring Training, 2010.}
   \Description{Enjoying the baseball game from the third-base
   seats. Ichiro Suzuki preparing to bat.}
