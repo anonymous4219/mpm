@@ -151,12 +151,48 @@ FPGAs.
   \draw[->] (x22) -- (x21);
   \draw[->] (r20) -| (x21);
   \draw[->] (x21) -| (5,1.3) -| (-.5,1) -- (r01);
-  %TODO: draw xor of write ports
-  %TODO: draw xor of full ports
+  \draw[->] (1.5,1.3) |- (r11);
+  \draw[->] (5,1.3) -- (9.5, 1.3) |- (r51);
+  \draw[->] (7.5, 1.3) |- (r41);
+  \draw[->] (5.5, 1.3) |- (r31);
+  %draw xor of full ports
+  %PORT1
+  \node(x11)[inner sep=0pt] at (2.8, 1){$\oplus$};
+  \node(x12)[inner sep=0pt] at (2.8, 2.5){$\oplus$};
+  \node(x12b)[inner sep=0pt] at (3, 2){$\oplus$};
+  \draw[->] (r10) -| (x11);
+  \draw[->] (r11) -- (x11);
+  \draw[->] (lport1.340) -- (x12);
+  \draw[->] (x11) -- (x12);
+  \draw[->] (r13) -| (x12);
+  \draw[->] (r12) -- (x12b);
+  \draw[->] (x12) -| (3.3, 2.3) -| (-.5,2) -- (r02);
+  \draw[->] (1.5,2.3) |- (r12);
+  \draw[->] (3.3, 2.3) -- (9.5, 2.3) |- (r52);
+  \draw[->] (3.5, 2.3) |- (r22);
+  \draw[->] (5.5, 2.3) |- (r32);
+  \draw[->] (7.5, 2.3) |- (r42);
+  \draw[->] (3,2.5) -- (x12b);
+  \draw[->] (x12b) -- (bport1.10);
+  %TODO: finish PORT0
+  \node(x01)[inner sep=0pt] at (0.8, 1){$\oplus$};
+  \node(x02)[inner sep=0pt] at (0.8, 2){$\oplus$};
+  \node(x03)[inner sep=0pt] at (0.8, 3.5){$\oplus$};
+  \draw[->] (r00) -| (x01);
+  \draw[->] (r01) -- (x01);
+  \draw[->] (x01) -- (x02);
+  \draw[->] (x02) -- (x03);
+  \draw[->] (lport0.340) -- (x03);
+  \draw[->] (x03) -| (1, 3.3) -| (-.5,3) -- (r03);
+  \draw[->] (1, 3.3) -- (9.5, 3.3) |- (r53);
+  \draw[->] (1.5, 3.3) |- (r13);
+  \draw[->] (3.5, 3.3) |- (r23);
+  \draw[->] (5.5, 3.3) |- (r33);
+  \draw[->] (7.5, 3.3) |- (r43);
   \end{tikzpicture}
   %\end{scaletikzpicturetowidth}
   \end{center}
-  \caption{Seattle Mariners at Spring Training, 2010.}
+  \caption{A multi-port memory with 2 full ports, 2 write-only ports and 2 read-only ports.}
   \Description{Enjoying the baseball game from the third-base
   seats. Ichiro Suzuki preparing to bat.}
   \label{fig:teaser}
