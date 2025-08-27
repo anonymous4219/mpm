@@ -1,7 +1,7 @@
 module lvt_memory #(
-  parameter WIDTH,
-  parameter DEPTH,
-  parameter PORTS
+  parameter WIDTH=32,
+  parameter DEPTH=512,
+  parameter PORTS=32
   )(
   input clk,
   input [$clog2(DEPTH)-1:0]addr[PORTS-1:0],
