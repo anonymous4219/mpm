@@ -28,8 +28,8 @@ module xor_distributed_memory #(
 
   genvar gi, gj;
   generate
-    for(gi = 0; gi < PORTS; gi = gi + 1) begin
-      for(gj = 0; gj < PORTS; gj = gj + 1) begin
+    for(gi = 0; gi < PORTS; gi = gi + 1) begin : y_genblock
+      for(gj = 0; gj < PORTS; gj = gj + 1) begin : x_genblock
         simple_distributed_ram #(WIDTH, DEPTH) gen_ram(clk, addr[gi], d[gi] ^ partial_xor_input[gi], en[gi], addr[gj], ram_output[gi][gj]);
       end
     end
