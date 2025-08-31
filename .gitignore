@@ -5,4 +5,8 @@ doc/paper.bbl
 doc/paper.blg
 doc/paper.log
 doc/paper.out
-syn
+syn/syn.cache/
+syn/syn.hw/
+syn/syn.runs/
+syn/syn.srcs/
+
