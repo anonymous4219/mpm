@@ -17,8 +17,8 @@ logic [WIDTH-1:0]intermediate_output[PORTS-1:0][PORTS-1:0];
 genvar gi, gj;
 
 generate
-  for(gi = 0; gi < PORTS; gi++) begin
-    for(gj = 0; gj < PORTS; gj++) begin
+  for(gi = 0; gi < PORTS; gi++) begin : y_genblock
+    for(gj = 0; gj < PORTS; gj++) begin : x_genblock
       if(gj < gi) begin
         dual_port_memory #(WIDTH, DEPTH) ram (
           clk,
