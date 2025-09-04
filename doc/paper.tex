@@ -106,6 +106,10 @@ FPGAs.
   \foreach \y in {0,1,2,3} {
     \node (lport\y)[rotate=90] at (-1.5, 3-\y){PORT\y};
   }
+  \node [rotate=90] at (-2, .5){WRITE PORTS};
+  \node [rotate=90] at (-2, 2.5){FULL PORTS};
+  \node [] at (1.5, -1.5){FULL PORTS};
+  \node [] at (9.5, -1.5){READ PORTS};
   \node(x50)[inner sep=0pt] at (10.8, 0){$\oplus$};
   \node(x51)[inner sep=0pt] at (10.8, 1){$\oplus$};
   \node(x52)[inner sep=0pt] at (10.8, 2){$\oplus$};
@@ -178,6 +182,7 @@ FPGAs.
   \node(x01)[inner sep=0pt] at (0.8, 1){$\oplus$};
   \node(x02)[inner sep=0pt] at (0.8, 2){$\oplus$};
   \node(x03)[inner sep=0pt] at (0.8, 3.5){$\oplus$};
+  \node(x03b)[inner sep=0pt] at (1.0, 2.8){$\oplus$};
   \draw[->] (r00) -| (x01);
   \draw[->] (r01) -- (x01);
   \draw[->] (x01) -- (x02);
@@ -189,6 +194,10 @@ FPGAs.
   \draw[->] (3.5, 3.3) |- (r23);
   \draw[->] (5.5, 3.3) |- (r33);
   \draw[->] (7.5, 3.3) |- (r43);
+  \draw[->] (.8, 2.8) -- (x03b);
+  \draw[->] (r02) -- (x02);
+  \draw[->] (r03) -| (x03b);
+  \draw[->] (x03b) -- (bport0.10);
   \end{tikzpicture}
   %\end{scaletikzpicturetowidth}
   \end{center}

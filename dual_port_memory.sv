@@ -10,7 +10,7 @@ module dual_port_memory #(
   input en_b,
   input [WIDTH-1:0]d_b,
   output logic [WIDTH-1:0]q_b
-  );
+);
 
   reg [WIDTH-1:0]ram[DEPTH-1:0];
 
