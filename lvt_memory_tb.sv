@@ -1,7 +1,7 @@
 module lvt_memory_tb;
-  parameter WIDTH=8;
-  parameter DEPTH=8;
-  parameter PORTS=4;
+  parameter WIDTH=32;
+  parameter DEPTH=512;
+  parameter PORTS=8;
   logic clk;
   logic [$clog2(DEPTH)-1:0]addr [PORTS-1:0];
   logic en[PORTS-1:0];
