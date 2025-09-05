@@ -162,13 +162,15 @@ FPGAs.
   %draw xor of full ports
   %PORT1
   \node(x11)[inner sep=0pt] at (2.8, 1){$\oplus$};
-  \node(x12)[inner sep=0pt] at (2.8, 2.5){$\oplus$};
+  \node(x12)[inner sep=0pt] at (3.3, 2.5){$\oplus$};
   \node(x12b)[inner sep=0pt] at (3, 2){$\oplus$};
+  \node(x13)[inner sep=0pt] at (2.8, 3){$\oplus$};
   \draw[->] (r10) -| (x11);
   \draw[->] (r11) -- (x11);
   \draw[->] (lport1.340) -- (x12);
-  \draw[->] (x11) -- (x12);
-  \draw[->] (r13) -| (x12);
+  \draw[->] (x11) -- (x13);
+  \draw[->] (r13) -- (x13);
+  \draw[->] (x13) -| (x12);
   \draw[->] (r12) -- (x12b);
   \draw[->] (x12) -| (3.3, 2.3) -| (-.5,2) -- (r02);
   \draw[->] (1.5,2.3) |- (r12);
@@ -176,7 +178,7 @@ FPGAs.
   \draw[->] (3.5, 2.3) |- (r22);
   \draw[->] (5.5, 2.3) |- (r32);
   \draw[->] (7.5, 2.3) |- (r42);
-  \draw[->] (3,2.5) -- (x12b);
+  \draw[->] (x13) -| (x12b);
   \draw[->] (x12b) -- (bport1.10);
   %TODO: finish PORT0
   \node(x01)[inner sep=0pt] at (0.8, 1){$\oplus$};
@@ -227,25 +229,27 @@ ports. Specifically we look at creating memories with more than 2 ports.
 The 3 major FPGA vendors implement distributed memory (small memories) and block memory (large memories)
 differently, however they share some characteristics.
 
-All 3 vendors support distributed memory configurations with 1 full port and up to 3 read ports.
+All 3 vendors support distributed memory configurations with 1 full port and between 1 to 3 read ports.
 
-All 3 vendors support block memory with 2 full ports.
+All 3 vendors support block memory with 2 full ports. None of the vendors support memories with more than 2 full ports.
+
+Although this limitation is problematic for designs requiring multiple ports particularly write or full ports, we show that these resources make it possible to achieve high throughput quad and octal full port memories.
 
 \section{Source Code}
 We provide all of the source code used in implementation and testing our design at
 github.com/kevintownsend/mpm. We tested our design with Verilator and implemented the design
 with Vivado (Xilinx/AMD).
 
-\section{Introduction}
+\section{XOR memory}
 
 We propose a simple generalization to XOR memories presented in previous work.
 XOR memories work by using the a xor b xor b = a property. We add bidirectional
 ports and analyze the perforamance of distributed memory and block memory
 versions of this design. We also present applications for these memories.
 
-We also present a LVT memory that utizazes distrubuted memory xor live value table.
-
 \section{Live Value Table Memory}
+
+We also present a LVT memory that utizazes distrubuted memory xor live value table.
 
 In (TODO citation) the live value table was implemented with registers. Previous work used
 distributed memory (TODO citation). However they did not use bidirectional xor ports in their implementation.
