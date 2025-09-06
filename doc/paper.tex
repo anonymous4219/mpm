@@ -2,6 +2,9 @@
 \usepackage{tikz}
 \usetikzlibrary{shapes.geometric}
 \usetikzlibrary{matrix}
+\usetikzlibrary{graphs}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18} % Recommended for modern TikZ/pgfplots
 \usepackage{environ}
 \usepackage{ifthen}
 %%
@@ -266,6 +269,53 @@ N**2 for XOR and N*(N-1)/2 for LVT. However we were able to synthesize a 16 port
 
 Without write delay the design runs at Xmhz (x\% of max). With write delay and pipelining the design runs at Xmhz.
 
+\begin{figure}
+  \begin{tikzpicture}
+    \draw[->] (0,0) -- (4.5, 0);
+    %TODO: draw ticks
+    %TODO: draw y axis
+    \draw[->] (0,0) -- (0, 5.5);
+    %TODO: draw labels
+    %TODO: draw line graph
+    %TODO: draw line graph for pipelnined.
+  \end{tikzpicture}
+  \caption{Frequency of design.}
+  \Description{A graph showing the frequency of the design for difference port counts.}
+\end{figure}
+
+% TODO: table of synthesis results.
+
+\begin{table}
+  \caption{Synthesis results for different port counts}
+  \label{tab:syn}
+  \begin{tabular}{lllll}
+    \toprule
+    Ports & LUTS & FF & BRAM & Max Frequency\\
+    \midrule
+    2 & 127 & 0 & 1 & 303Mhz\\
+    4 & 640 & 0 & 6 & 238Mhz\\
+    8 & 3,012 & 0 & 28 & 180Mhz\\
+    16 & 16,544 & 0 & 120 & 146Mhz\\
+    32 & 85,728 & 0 & 496 & 67Mhz\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}
+  \caption{Synthesis results for different port counts for pipelined design}
+  \label{tab:synpiped}
+  \begin{tabular}{lllll}
+    \toprule
+    Ports & LUTS & FF & BRAM & Max Frequency\\
+    \midrule
+    2 & 111 & 26 & 1 & 303Mhz\\
+    4 & 708 & 64 & 6 & 238Mhz\\
+    8 & 3,092 & 152 & 28 & 363Mhz\\
+    16 & 16,800 & 448 & 120 & 146Mhz\\
+    32 & 86,608 & 1,502 & 496 & 67Mhz\\
+    \bottomrule
+  \end{tabular}
+\end{table}
 \section{Conclusion}
 Several solutions to the port limit on FPGAs other than what is presented here.
 For example multi-pumping and banking. multi-pumping is the process of reducing
