@@ -3,6 +3,7 @@
 \usetikzlibrary{shapes.geometric}
 \usetikzlibrary{matrix}
 \usetikzlibrary{graphs}
+\usetikzlibrary{shapes.geometric}
 \usepackage{pgfplots}
 \pgfplotsset{compat=1.18} % Recommended for modern TikZ/pgfplots
 \usepackage{environ}
@@ -47,6 +48,10 @@
   We propose a simple extention to XOR memories presented in previous work.
 In this paper we generalize the XOR memory. We explore the resource usage on Xilinx/AMD
 FPGAs.
+
+This paper presents a novel and efficient architecture for creating live value table memory using an XOR-based scheme, emphasizing its bidirectional capabilities
+. By combining the principles of a banked memory design with the logical properties of the XOR operation, we address the limitations of traditional Live Value Table (LVT) approaches, particularly concerning resource overhead for deep memories and multi-port support. The proposed architecture eliminates the need for the control logic and multiplexing associated with a conventional LVT by storing XOR-encoded data across multiple memory banks.
+A key contribution of our work is the demonstration of a bidirectional memory system, where data can be written to and retrieved from any port, and memory access patterns can be reversed. This is achieved by exploiting the associative and commutative properties of XOR, allowing any data entry to be reconstructed by XORing the corresponding entries from all memory banks. The result is a high-throughput, coherent multi-ported memory that is particularly well-suited for implementation on Field-Programmable Gate Arrays (FPGAs). We evaluate the architecture's performance and resource utilization, showing that it uses significantly less logic and can achieve higher frequencies for deep memory configurations compared to LVT-based designs. This makes the XOR-based bidirectional live value table a compelling alternative for applications requiring high-performance, flexible memory access.
 \end{abstract}
 
 %%
@@ -183,7 +188,7 @@ FPGAs.
   \draw[->] (7.5, 2.3) |- (r42);
   \draw[->] (x13) -| (x12b);
   \draw[->] (x12b) -- (bport1.10);
-  %TODO: finish PORT0
+  %PORT0
   \node(x01)[inner sep=0pt] at (0.8, 1){$\oplus$};
   \node(x02)[inner sep=0pt] at (0.8, 2){$\oplus$};
   \node(x03)[inner sep=0pt] at (0.8, 3.5){$\oplus$};
@@ -245,14 +250,71 @@ with Vivado (Xilinx/AMD).
 
 \section{XOR memory}
 
-We propose a simple generalization to XOR memories presented in previous work.
+We propose a simple generalization to XOR memories presented in previous work\cite{laforest14}.
 XOR memories work by using the a xor b xor b = a property. We add bidirectional
 ports and analyze the perforamance of distributed memory and block memory
 versions of this design. We also present applications for these memories.
 
-\section{Live Value Table Memory}
+The number of RAMs needed is:
 
-We also present a LVT memory that utizazes distrubuted memory xor live value table.
+$(W+F)(W+F+R)-W$
+
+which expands to:
+
+$W^2 + 2WF + F^2 + WR + FR - W$
+
+\section{Live Value Table Memory}
+%TODO: live value table figure.
+\begin{figure}
+  \begin{tikzpicture}[xscale=1.5]
+  %draw rams
+  \foreach \x in {0,1,2,3} {
+    \foreach \y in {0,1,2,3} {
+      \ifthenelse{\x < \y}{
+      \node(r\y\x)[trapezium, trapezium left angle=70, trapezium right angle=110, draw] at (\x,3-\y) {RAM};
+      }{
+      \node[text=gray,dashed, trapezium, trapezium left angle=70, trapezium right angle=110, draw] at (\x,3-\y) {RAM};
+      }
+    }
+  }
+  %draw a ports
+  \foreach \x in {0,1,2,3} {
+    \node(xport\x) at (\x, -1) {\x};
+  }
+  %draw b ports
+  \foreach \y in {0,1,2,3} {
+    \node(yport\y) at (-1, 3-\y) {\y};
+  }
+  %draw connections
+  %x0 connections
+  \draw (xport0) .. controls (.8,-1) and (.8,2) .. (r10.east);
+  \draw (xport0) .. controls (.6,-1) and (.7,1) .. (r20.east);
+  \draw (xport0) .. controls (.4,-1) and (.6,0) .. (r30.east);
+  %x1 connections
+  \draw (xport1) .. controls (1.6,-1) and (1.7,1) .. (r21);
+  \draw (xport1) .. controls (1.4,-1) and (1.6,0) .. (r31);
+  %x2 connection
+  \draw (xport2) .. controls (2.4,-1) and (2.6,0) .. (r32);
+  %y1 connection
+  \draw (yport1) .. controls (-1, 2.5) and (0, 2.5) .. (r10);
+  %y2 connections
+  \draw (yport2) .. controls (-1, 1.4) and (0, 1.4) .. (r20);
+  \draw (yport2) .. controls (-1, 1.6) and (1, 1.6) .. (r21);
+  %y3 connections
+  \draw (yport3) .. controls (-1, 0.4) and (0, 0.4) .. (r30);
+  \draw (yport3) .. controls (-1, 0.6) and (1, 0.6) .. (r31);
+  \draw (yport3) .. controls (-1, 0.8) and (2, 0.8) .. (r32);
+  %draw labels
+  \node at (-1.5, 1)[rotate=90]{Ports};
+  \node at (1, -1.5){Ports};
+  \end{tikzpicture}
+  \caption{Multiport memory created with dual-port memories.}
+  \Description{An illustration.}
+\end{figure}
+
+XOR memories can be used by themselves, however a live value table (LVT) may be more efficient.
+
+We present a LVT memory that utilises distrubuted memory xor live value table.
 
 In (TODO citation) the live value table was implemented with registers. Previous work used
 distributed memory (TODO citation). However they did not use bidirectional xor ports in their implementation.
@@ -275,22 +337,32 @@ Without write delay the design runs at Xmhz (x\% of max). With write delay and p
     \draw (0,.1) -- (0, -.1) node[anchor=north] {2};
     \draw (1,.1) -- (1, -.1) node[anchor=north] {4};
     \draw (2,.1) -- (2, -.1) node[anchor=north] {8};
-    \draw (3,.1) -- (3, -.1) node[anchor=north] {16};
-    \draw (4,.1) -- (4, -.1) node[anchor=north] {32};
-    %TODO: draw y axis
+    \draw (3,.1) -- (3, -.1) node[anchor=north] {16\footnotemark[1]};
+    \draw (4,.1) -- (4, -.1) node[anchor=north] {32\footnotemark[1]};
+    %draw y axis
     \draw[->] (0,0) -- (0, 5.5);
     \draw (1pt, 0) -- (-1pt, 0) node[rotate=45,anchor=south east] {0Mhz};
     \foreach \y in {1,2,3,4,5}
       \draw (1pt, \y) -- (-1pt, \y) node[rotate=45,anchor=south east] {\y00Mhz};
-    %TODO: draw labels
-    %TODO: draw line graph
-    %TODO: draw line graph for pipelnined.
+    %labels
+    \node at (2,-1) {PORTS};
+    \node at (-1.5,2) [rotate=90]{FREQUENCY};
+    %line graphs
+    \draw (0, 3.03) -- (1, 2.38) -- (2, 1.80) -- (3, 1.46) -- (4, 0.67);
+    \node[fill=blue, draw,label=above right:303Mhz] at (0,3.03){};
+    \node[fill=blue, draw] at (1,2.38){};
+    \node[fill=blue, draw] at (2,1.80){};
+    \node[fill=blue, draw] at (3,1.46){};
+    \node[fill=blue, draw] at (4,.67){};
+    %line graph for pipelnined.
+    \draw (0, 5.18) -- (1, 5.00) -- (2, 4.51) -- (3, 2.84);
+    \node[fill=red, draw, circle,inner sep=2pt,label={[rotate=30]right:518Mhz}] at (0,5.18){};
   \end{tikzpicture}
   \caption{Frequency of design.}
   \Description{A graph showing the frequency of the design for difference port counts.}
 \end{figure}
 
-% TODO: table of synthesis results.
+\footnotetext{To reduce the number of IO ports and fit the design on the FPGA we used a wrapper for the multi-port memory for designs with 16 and 32 ports.}
 
 \begin{table}
   \caption{Synthesis results for different port counts}
@@ -302,8 +374,8 @@ Without write delay the design runs at Xmhz (x\% of max). With write delay and p
     2 & 127 & 0 & 1 & 303Mhz\\
     4 & 640 & 0 & 6 & 238Mhz\\
     8 & 3,012 & 0 & 28 & 180Mhz\\
-    16 & 16,544 & 0 & 120 & 146Mhz\\
-    32 & 85,728 & 0 & 496 & 67Mhz\\
+    16\footnotemark[1] & 16,544 & 0 & 120 & 146Mhz\\
+    32\footnotemark[1] & 85,728 & 0 & 496 & 67Mhz\\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -316,10 +388,10 @@ Without write delay the design runs at Xmhz (x\% of max). With write delay and p
     Ports & LUTS & FF & BRAM & Max Frequency\\
     \midrule
     2 & 111 & 26 & 1 & 518Mhz\\
-    4 & 708 & 64 & 6 & 396Mhz\\
-    8 & 3,092 & 152 & 28 & 389Mhz\\
-    16 & 16,800 & 448 & 120 & 284Mhz\\
-    32 & 86,608 & 1,502 & 496 & XMhz\\
+    4 & 708 & 64 & 6 & 500Mhz\\
+    8 & 3,092 & 152 & 28 & 451Mhz\\
+    16\footnotemark[1] & 16,800 & 448 & 120 & 284Mhz\\
+    32\footnotemark[1] & 86,608 & 1,502 & 496 & XMhz\\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -334,7 +406,7 @@ XOR and LVT to create multiple ports.
 %% The next two lines define the bibliography style to be used, and
 %% the bibliography file.
 \bibliographystyle{ACM-Reference-Format}
-\bibliography{sample-base}
+\bibliography{paper}
 
 
 %%
