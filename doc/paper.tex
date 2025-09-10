@@ -46,12 +46,12 @@
 
 \begin{abstract}
   We propose a simple extention to XOR memories presented in previous work.
-In this paper we generalize the XOR memory. We explore the resource usage on Xilinx/AMD
-FPGAs.
+In this paper we generalize the XOR memory allowing for any number of full, read-only and write-only ports.
+FPGAs.This paper also presents a novel and efficient architecture for creating live value table memory using an XOR-based scheme, emphasizing its bidirectional capabilities.
 
-This paper presents a novel and efficient architecture for creating live value table memory using an XOR-based scheme, emphasizing its bidirectional capabilities
-. By combining the principles of a banked memory design with the logical properties of the XOR operation, we address the limitations of traditional Live Value Table (LVT) approaches, particularly concerning resource overhead for deep memories and multi-port support. The proposed architecture eliminates the need for the control logic and multiplexing associated with a conventional LVT by storing XOR-encoded data across multiple memory banks.
-A key contribution of our work is the demonstration of a bidirectional memory system, where data can be written to and retrieved from any port, and memory access patterns can be reversed. This is achieved by exploiting the associative and commutative properties of XOR, allowing any data entry to be reconstructed by XORing the corresponding entries from all memory banks. The result is a high-throughput, coherent multi-ported memory that is particularly well-suited for implementation on Field-Programmable Gate Arrays (FPGAs). We evaluate the architecture's performance and resource utilization, showing that it uses significantly less logic and can achieve higher frequencies for deep memory configurations compared to LVT-based designs. This makes the XOR-based bidirectional live value table a compelling alternative for applications requiring high-performance, flexible memory access.
+This is achieved by exploiting the properties of XOR, allowing any data entry to be reconstructed by XORing the corresponding entries from all memory banks. The result is a high-throughput, coherent multi-ported memory that is particularly well-suited for implementation on Field-Programmable Gate Arrays (FPGAs).
+
+We evaluate the architecture's performance and resource utilization, showing that it uses significantly less logic and can achieve higher frequencies for deep memory configurations compared to LVT-based designs. This makes the XOR-based bidirectional live value table a compelling alternative for applications requiring high-performance, flexible memory access.
 \end{abstract}
 
 %%
@@ -309,6 +309,47 @@ $W^2 + 2WF + F^2 + WR + FR - W$
   \node at (1, -1.5){Ports};
   \end{tikzpicture}
   \caption{Multiport memory created with dual-port memories.}
+  \Description{An illustration.}
+\end{figure}
+
+\begin{figure}
+  \begin{tikzpicture}[yscale=1.2]
+    \node(lvt)[draw] at (2.5, 1) {LVT};
+    \foreach \x in {0,1,2,3}{
+    \node(mux\x)[draw,trapezium, rotate=-90,inner sep=5pt] at (2*\x,0){};
+    \node(mux\x port0) at (2*\x-.7,.3){0};
+    \node(mux\x port1) at (2*\x-.7,.1){1};
+    \node(mux\x port2) at (2*\x-.7,-.1){2};
+    \node(mux\x port3) at (2*\x-.7,-.3){3};
+    \ifthenelse{\x=0}{
+    \draw[->,dashed] (mux\x port0) -- (mux\x.210);
+    }{
+    \draw[->] (mux\x port0) -- (mux\x.210);
+    }
+    \ifthenelse{\x=1}{
+    \draw[->,dashed] (mux\x port1) -- (mux\x.240);
+    }{
+    \draw[->] (mux\x port1) -- (mux\x.240);
+    }
+    \ifthenelse{\x=2}{
+    \draw[->,dashed] (mux\x port2) -- (mux\x.300);
+    }{
+    \draw[->] (mux\x port2) -- (mux\x.300);
+    }
+    \ifthenelse{\x=3}{
+    \draw[->,dashed] (mux\x port3) -- (mux\x.330);
+    }{
+    \draw[->] (mux\x port3) -- (mux\x.330);
+    }
+    \draw[->] (mux\x ) -- (2*\x+.5,0);
+    \node at (2*\x,-.5) {PORT\x};
+    }
+    \draw[->] (lvt) .. controls (0,.5) .. (mux0);
+    \draw[->] (lvt) .. controls (2,.5) .. (mux1);
+    \draw[->] (lvt) .. controls (4,.5) .. (mux2);
+    \draw[->] (lvt) .. controls (6,.5) .. (mux3);
+  \end{tikzpicture}
+  \caption{LVT Multiport memory created with dual-port memories.}
   \Description{An illustration.}
 \end{figure}
 
