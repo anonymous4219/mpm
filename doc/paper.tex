@@ -39,18 +39,21 @@
 %% Of note is the shared affiliation of the first two authors, and the
 %% "authornote" and "authornotemark" commands
 %% used to denote shared contribution to the research.
-\author{Kevin Townsend}
-\email{kt@krtownsend.com}
+%\author{Kevin Townsend}
+\author{XXX}
+\email{XXX@XXX}
 
-\renewcommand{\shortauthors}{Townsend et al.}
+%\renewcommand{\shortauthors}{Townsend}
+\renewcommand{\shortauthors}{XXX}
 
 \begin{abstract}
   We propose a simple extention to XOR memories presented in previous work.
 In this paper we generalize the XOR memory allowing for any number of full, read-only and write-only ports.
 FPGAs.This paper also presents a novel and efficient architecture for creating live value table memory using an XOR-based scheme, emphasizing its bidirectional capabilities.
 
-This is achieved by exploiting the properties of XOR, allowing any data entry to be reconstructed by XORing the corresponding entries from all memory banks. The result is a high-throughput, coherent multi-ported memory that is particularly well-suited for implementation on Field-Programmable Gate Arrays (FPGAs).
+This is achieved by exploiting the properties of XOR, allowing any data entry to be reconstructed by XORing the corresponding entries from all memory banks. The result is a high-throughput, coherent multi-ported memory that is particularly well-suited for implementation on FPGAs.
 
+We use an XOR memory with full ports to implement a live value table (LVT) design.
 We evaluate the architecture's performance and resource utilization, showing that it uses significantly less logic and can achieve higher frequencies for deep memory configurations compared to LVT-based designs. This makes the XOR-based bidirectional live value table a compelling alternative for applications requiring high-performance, flexible memory access.
 \end{abstract}
 
@@ -228,13 +231,13 @@ We evaluate the architecture's performance and resource utilization, showing tha
 
 \section{Motivation}
 
-As computation needs keep increasing with Moore's Law one way to keep up has been
+As computation needs keep increasing, one way to keep up with Moore's Law has been
 specialized architectures. FPGAs provide a way to implement architectures without taping out an ASIC.
 However, the limitations of FPGA resources means some creativity is needed to map designs to FPGAs.
 This paper explores the limitation of FPGAs in the fact that FPGA memories have a limited number of
 ports. Specifically we look at creating memories with more than 2 ports.
 
-The 3 major FPGA vendors implement distributed memory (small memories) and block memory (large memories)
+The 3 major FPGA vendors\cite{amd20,intel24,lattice21} implement distributed memory (small memories) and block memory (large memories)
 differently, however they share some characteristics.
 
 All 3 vendors support distributed memory configurations with 1 full port and between 1 to 3 read ports.
@@ -245,26 +248,29 @@ Although this limitation is problematic for designs requiring multiple ports par
 
 \section{Source Code}
 We provide all of the source code used in implementation and testing our design at
-github.com/kevintownsend/mpm. We tested our design with Verilator and implemented the design
+https://anonymous.4open.science/r/mpm-7666/. We tested our design with Verilator and implemented the design
 with Vivado (Xilinx/AMD).
 
 \section{XOR memory}
 
 We propose a simple generalization to XOR memories presented in previous work\cite{laforest14}.
-XOR memories work by using the a xor b xor b = a property. We add bidirectional
+XOR memories work by using the $a \oplus b \oplus b = a$ property. We add bidirectional
 ports and analyze the perforamance of distributed memory and block memory
 versions of this design. We also present applications for these memories.
 
-The number of RAMs needed is:
+The number of RAMs needed is: $(W+F)(W+F+R)-W$, which expands to: $W^2 + 2WF + F^2 + WR + FR - W$.
 
-$(W+F)(W+F+R)-W$
+Reading data from an XOR memory simply involves XORing all of the data from the RAMs in one column from the same address. For example say address $x$ has values $A$, $B$, $C$ and $D$, the data read would be $A\oplus B\oplus C \oplus D$.
 
-which expands to:
+Writing to the memory involves reading from all memories except the current row (say row/port 2 in the example) and XORing the incoming data $E$ (in the example this results in $A\oplus B \oplus D \oplus E$) and storing that value in all the RAMs in that row.
 
-$W^2 + 2WF + F^2 + WR + FR - W$
+The next time that data is read the result will be $A\oplus B \oplus (A \oplus B\oplus D\oplus E) \oplus D$, which equals $E$.
+
+You may notice that writing to a port involves XORing all but one stored value and reading involves XORing all values. This enables full ports to be created just by adding one RAM to what would otherwise be just a write port.
+
+Note that this memory requires that all of the RAMs in a row have the same data. Initializing the rams to the same data (e.g. all 0s) is required for the memory to operate properly. This is not an issue in FPGAs since the memory can be initialized to 0. since rows are written to at the same time as long as the memories are intially the same they will remain the same.
 
 \section{Live Value Table Memory}
-%TODO: live value table figure.
 \begin{figure}
   \begin{tikzpicture}[xscale=1.5]
   %draw rams
@@ -357,20 +363,24 @@ XOR memories can be used by themselves, however a live value table (LVT) may be 
 
 We present a LVT memory that utilises distrubuted memory xor live value table.
 
-In (TODO citation) the live value table was implemented with registers. Previous work used
-distributed memory (TODO citation). However they did not use bidirectional xor ports in their implementation.
+In \cite{laforest12} the live value table was implemented with registers. Previous work used
+distributed memory \cite{abdelhadi16}. However they did not use bidirectional xor ports in their implementation.
 
-We create a LVT memory using the technique described in (TODO cititaion). TODO: describe technique.
+We create a LVT memory using the technique described in \cite{choi12}. This live value memory is composed of 2-(full)port memories. Each port shares a RAM with another port. This results in $N(N-1)/2$ RAMs being needed. See figure (todo cite figure).
+
+The memory gets its name because of a multiport memory that tracks the most recent stored value (aka a live value table). The point of a multi-port memory that requires a multi-port memory is that wide (e.g. 32 bit data) can be stored more effeciently this way.
+
+Instead of using a register based live-value table as in \cite{choi12} we use a xor memory similar to \cite{abdelhadi16}.
 
 We show we utilize x\% less resources than LVT and I-LVT.
 
 \section{Implementation}
 
-We obviously wanted to explore impractical designs with large numbers of ports. We say
-impractical because of the high resource usage of XOR and LVT memories at high port counts.
-N**2 for XOR and N*(N-1)/2 for LVT. However we were able to synthesize a 16 port memory.
+We explore designs with 4 to 32 ports. Although 16 and 32 port designs fit on large FPGAs, we believe smaller 4 and 8 port designs are more practical. We say
+more practical because of the high resource usage of XOR and LVT memories at high port counts.
+N**2 for XOR and N*(N-1)/2 for LVT. However we were able to synthesize a 32 port memory.
 
-Without write delay the design runs at Xmhz (x\% of max). With write delay and pipelining the design runs at Xmhz.
+Without write delay an 8 port memory runs at Xmhz (x\% of max). With write delay and pipelining the design runs at Xmhz (x\% of max).
 
 \begin{figure}
   \begin{tikzpicture}
@@ -388,16 +398,18 @@ Without write delay the design runs at Xmhz (x\% of max). With write delay and p
     %labels
     \node at (2,-1) {PORTS};
     \node at (-1.5,2) [rotate=90]{FREQUENCY};
+    %max frequncy
+    \draw[dashed] (0, 5.44) -- (4, 5.44) node[anchor=west] {544Mhz};
     %line graphs
-    \draw (0, 3.03) -- (1, 2.38) -- (2, 1.80) -- (3, 1.46) -- (4, 0.67);
-    \node[fill=blue, draw,label=above right:303Mhz] at (0,3.03){};
-    \node[fill=blue, draw] at (1,2.38){};
-    \node[fill=blue, draw] at (2,1.80){};
-    \node[fill=blue, draw] at (3,1.46){};
-    \node[fill=blue, draw] at (4,.67){};
+    \draw (0, 4.55) -- (1, 3.64) -- (2, 2.78) -- (3, 1.46) -- (4, 0.67);
+    \node[fill=blue, draw,label={[rotate=30]right:455Mhz}] at (0,4.55){};
+    \node[fill=blue, draw,label={[rotate=30]right:364Mhz}] at (1,3.64){};
+    \node[fill=blue, draw,label={[rotate=30]right:278Mhz}] at (2,2.78){};
+    \node[fill=blue, draw,label={[rotate=30]right:146Mhz}] at (3,1.46){};
+    \node[fill=blue, draw,label={[rotate=30]right:67Mhz}] at (4,.67){};
     %line graph for pipelnined.
-    \draw (0, 5.18) -- (1, 5.00) -- (2, 4.51) -- (3, 2.84);
-    \node[fill=red, draw, circle,inner sep=2pt,label={[rotate=30]right:518Mhz}] at (0,5.18){};
+    \draw (0, 4.76) -- (1, 5.00) -- (2, 4.51) -- (3, 2.84);
+    \node[fill=red, draw, circle,inner sep=2pt,label={[rotate=30]right:476Mhz}] at (0,4.76){};
   \end{tikzpicture}
   \caption{Frequency of design.}
   \Description{A graph showing the frequency of the design for difference port counts.}
@@ -412,9 +424,9 @@ Without write delay the design runs at Xmhz (x\% of max). With write delay and p
     \toprule
     Ports & LUTS & FF & BRAM & Max Frequency\\
     \midrule
-    2 & 127 & 0 & 1 & 303Mhz\\
-    4 & 640 & 0 & 6 & 238Mhz\\
-    8 & 3,012 & 0 & 28 & 180Mhz\\
+    2 & 127 & 0 & 1 & 455Mhz\\
+    4 & 640 & 0 & 6 & 364Mhz\\
+    8 & 3,012 & 0 & 28 & 278Mhz\\
     16\footnotemark[1] & 16,544 & 0 & 120 & 146Mhz\\
     32\footnotemark[1] & 85,728 & 0 & 496 & 67Mhz\\
     \bottomrule
@@ -428,7 +440,7 @@ Without write delay the design runs at Xmhz (x\% of max). With write delay and p
     \toprule
     Ports & LUTS & FF & BRAM & Max Frequency\\
     \midrule
-    2 & 111 & 26 & 1 & 518Mhz\\
+    2 & 111 & 26 & 1 & 476Mhz\\
     4 & 708 & 64 & 6 & 500Mhz\\
     8 & 3,092 & 152 & 28 & 451Mhz\\
     16\footnotemark[1] & 16,800 & 448 & 120 & 284Mhz\\
