@@ -49,7 +49,7 @@
 \begin{abstract}
   We propose a simple extention to XOR memories presented in previous work.
 In this paper we generalize the XOR memory allowing for any number of full, read-only and write-only ports.
-FPGAs.This paper also presents a novel and efficient architecture for creating live value table memory using an XOR-based scheme, emphasizing its bidirectional capabilities.
+This paper also presents a novel and efficient architecture for creating live value table memory using an XOR-based scheme, emphasizing its bidirectional capabilities.
 
 This is achieved by exploiting the properties of XOR, allowing any data entry to be reconstructed by XORing the corresponding entries from all memory banks. The result is a high-throughput, coherent multi-ported memory that is particularly well-suited for implementation on FPGAs.
 
@@ -258,7 +258,9 @@ XOR memories work by using the $a \oplus b \oplus b = a$ property. We add bidire
 ports and analyze the perforamance of distributed memory and block memory
 versions of this design. We also present applications for these memories.
 
-The number of RAMs needed is: $(W+F)(W+F+R)-W$, which expands to: $W^2 + 2WF + F^2 + WR + FR - W$.
+%TODO: fix wording. There is no analysis on xor memories.
+
+The number of RAMs needed is: $(W+F)(W+F+R)-W$, which expands to: $W^2 + 2WF + F^2 + WR + FR - W$. Where $W$ is the number of write ports, $R$ is the number of read ports and $F$ is the number of full ports.
 
 Reading data from an XOR memory simply involves XORing all of the data from the RAMs in one column from the same address. For example say address $x$ has values $A$, $B$, $C$ and $D$, the data read would be $A\oplus B\oplus C \oplus D$.
 
@@ -374,9 +376,9 @@ Instead of using a register based live-value table as in \cite{choi12} we use a 
 
 We show we utilize x\% less resources than LVT and I-LVT.
 
-\section{Implementation}
+\section{Implementation of LVT}
 
-We explore designs with 4 to 32 ports. Although 16 and 32 port designs fit on large FPGAs, we believe smaller 4 and 8 port designs are more practical. We say
+We explore LVT designs with 2 to 32 ports. Although 16 and 32 port designs fit on large FPGAs, we believe smaller 4 and 8 port designs are more practical. We say
 more practical because of the high resource usage of XOR and LVT memories at high port counts.
 N**2 for XOR and N*(N-1)/2 for LVT. However we were able to synthesize a 32 port memory.
 
@@ -454,7 +456,7 @@ For example multi-pumping and banking. multi-pumping is the process of reducing
 the clock speed to increase the number of ports. For example a 300Mhz single
 port memory can handle 2 150Mhz ports. Banking requires stalls and routing logic
 due to the segmented memory. Our design uses replication and some creativity
-XOR and LVT to create multiple ports.
+(XOR and LVT techniques) to create multiple ports.
 
 %% The next two lines define the bibliography style to be used, and
 %% the bibliography file.
