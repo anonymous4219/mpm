@@ -8,6 +8,10 @@
 \pgfplotsset{compat=1.18} % Recommended for modern TikZ/pgfplots
 \usepackage{environ}
 \usepackage{ifthen}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage{fp}
+\usepackage{makecell}
 %%
 %% \BibTeX command to typeset BibTeX logo in the docs
 \AtBeginDocument{%
@@ -31,7 +35,7 @@
 
 \begin{document}
 
-\title{Yet Another Multi-Port Memory for FPGAs Using XOR and LVT Methods}
+\title{Multi-Port Memory with Bi-directional Ports for FPGAs Using XOR and LVT Methods}
 
 %%
 %% The "author" command and its associated commands are used to define
@@ -99,9 +103,179 @@ We evaluate the architecture's performance and resource utilization, showing tha
 %% A "teaser" image appears between the author and affiliation
 %% information and the body of the document, and typically spans the
 %% page.
-\begin{teaserfigure}
+
+\received{1 Octomber 2025}
+\received[revised]{XX XXX XXXX}
+\received[accepted]{XX XXX XXXX}
+
+%%
+%% This command processes the author and affiliation and title
+%% information and builds the first part of the formatted document.
+\maketitle
+
+\section{Motivation}
+\begin{figure}
+  \centering
+  \begin{subfigure}[t]{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=3]
+      \draw (.25,1.75) rectangle (.75,2.25);
+      \foreach \j in {-.15,-.05, .05, .15}{
+          \draw[] (.25, 2+\j) -- (.75,2+\j);
+      }
+      \foreach \i/\v in {0/1101,1/1111,2/0111,3/1000,4/0101}{
+          \FPeval{\x}{.7-\i*.1};
+          \FPeval{\y}{2-.2+\i*.1};
+          \node[] at (.5,\y) {\v};
+      }
+      \node at (.5,2.25)[anchor=south]{RAM$_{emulated}$};
+      \draw[xshift=-.5cm] (.25,0.75) rectangle (.75,1.25);
+      \node at (0,1.25) [anchor=south]{RAM$_{0,0}$};
+      \foreach \j in {-.15,-.05, .05, .15}{
+          \draw[] (-.25, 1+\j) -- (.25,1+\j);
+      }
+      \foreach \i/\v in {0/1010,1/1111,2/0100,3/1010,4/0100}{
+          \FPeval{\x}{.7-\i*.1};
+          \FPeval{\y}{1-.2+\i*.1};
+          \node[] at (0,\y) {\v};
+      }
+      \draw[xshift=.5cm] (.25,0.75) rectangle (.75,1.25);
+      \node at (1,1.25) [anchor=south]{RAM$_{1,0}$};
+      \foreach \j in {-.15,-.05, .05, .15}{
+          \draw[] (1-.25, 1+\j) -- (1.25,1+\j);
+      }
+      \foreach \i/\v in {0/1010,1/1111,2/0100,3/1010,4/0100}{
+          \FPeval{\y}{1-.2+\i*.1};
+          \node[] at (1,\y) {\v};
+      }
+      \draw[xshift=-.5cm,yshift=-1cm] (.25,0.75) rectangle (.75,1.25);
+      \node at (0,.25) [anchor=south]{RAM$_{0,1}$};
+      \foreach \j in {-.15,-.05, .05, .15}{
+          \draw[] (0-.25, 0+\j) -- (0.25,0+\j);
+      }
+      \foreach \i/\v in {0/0111,1/0000,2/0011,3/0010,4/0001}{
+          \FPeval{\y}{1-.2+\i*.1};
+          \node[] at (0,-1+\y) {\v};
+      }
+      \draw[xshift=.5cm,yshift=-1cm] (.25,0.75) rectangle (.75,1.25);
+      \node at (1,.25) [anchor=south]{RAM$_{1,1}$};
+      \foreach \j in {-.15,-.05, .05, .15}{
+          \draw[] (1-.25, 0+\j) -- (1.25,0+\j);
+      }
+      \foreach \i/\v in {0/0111,1/0000,2/0011,3/0010,4/0001}{
+          \FPeval{\y}{1-.2+\i*.1};
+          \node[] at (1,-1+\y) {\v};
+      }
+      %draw XORs
+      \node(x0)[inner sep=0pt] at (.5,0){$\oplus$};
+      \node(x1)[inner sep=0pt] at (1.5,.5){$\oplus$};
+      %draw ports
+      \node(p0) at (.5,-.5) {PORT0};
+      \node(p1) at (-.5,.5) [rotate=90]{PORT1};
+      %draw connections
+      \draw[->] (p1) -- (x1) node[pos=.75,fill=white]{1000};
+      \draw[->] (1.25,1) -| (x1);
+      \draw (x1) |- (-.3, .45);
+      \draw[->] (-.3, .45) |- (-.25, 0);
+      \draw[->] (.65, .45) |- (.75, 0);
+      \draw[->] (.25, 1) -| (x0);
+      \draw[->] (.25, 0) -- (x0);
+      \draw[->] (x0) -- (p0);
+      %TODO: draw emulated ram connections.
+      \node(ep1) at (-.5,2) {PORT1};
+      \draw[->] (ep1) -- (.25,2) node[midway,fill=white]{1000};
+      \node(ep0) at (1.25,2) {PORT0};
+      \draw[->] (.75,2) -- (ep0);
+    \end{tikzpicture}
+    \caption{Clock cycle 0.}
+
+  \end{subfigure}
+  \begin{subfigure}[t]{0.45\textwidth}
+    \centering
+    \begin{tikzpicture}[scale=3]
+      %draw emulated ram
+      %\draw[] (.5,2-.25) -- (1,2-.25) -- (.5,2.25) -- (0, 2.25) -- cycle;
+      \draw (.25,1.75) rectangle (.75,2.25);
+      \foreach \j in {-.15,-.05, .05, .15}{
+          \draw[] (.25, 2+\j) -- (.75,2+\j);
+      }
+      \foreach \i/\v in {0/1101,1/1111,2/1000,3/1000,4/0101}{
+          \FPeval{\x}{.7-\i*.1};
+          \FPeval{\y}{2-.2+\i*.1};
+          \node[] at (.5,\y) {\v};
+      }
+      \node at (.5,2.25)[anchor=south]{RAM$_{emulated}$};
+      \draw[xshift=-.5cm] (.25,0.75) rectangle (.75,1.25);
+      \node at (0,1.25) [anchor=south]{RAM$_{0,0}$};
+      \foreach \j in {-.15,-.05, .05, .15}{
+          \draw[] (-.25, 1+\j) -- (.25,1+\j);
+      }
+      \foreach \i/\v in {0/1010,1/1111,2/0100,3/1010,4/0100}{
+          \FPeval{\x}{.7-\i*.1};
+          \FPeval{\y}{1-.2+\i*.1};
+          \node[] at (0,\y) {\v};
+      }
+      \draw[xshift=.5cm] (.25,0.75) rectangle (.75,1.25);
+      \node at (1,1.25) [anchor=south]{RAM$_{1,0}$};
+      \foreach \j in {-.15,-.05, .05, .15}{
+          \draw[] (1-.25, 1+\j) -- (1.25,1+\j);
+      }
+      \foreach \i/\v in {0/1010,1/1111,2/0100,3/1010,4/0100}{
+          \FPeval{\y}{1-.2+\i*.1};
+          \node[] at (1,\y) {\v};
+      }
+      \draw[xshift=-.5cm,yshift=-1cm] (.25,0.75) rectangle (.75,1.25);
+      \node at (0,.25) [anchor=south]{RAM$_{0,1}$};
+      \foreach \j in {-.15,-.05, .05, .15}{
+          \draw[] (0-.25, 0+\j) -- (0.25,0+\j);
+      }
+      \foreach \i/\v in {0/0111,1/0000,2/1100,3/0010,4/0001}{
+          \FPeval{\y}{1-.2+\i*.1};
+          \node[] at (0,-1+\y) {\v};
+      }
+      \draw[xshift=.5cm,yshift=-1cm] (.25,0.75) rectangle (.75,1.25);
+      \node at (1,.25) [anchor=south]{RAM$_{1,1}$};
+      \foreach \j in {-.15,-.05, .05, .15}{
+          \draw[] (1-.25, 0+\j) -- (1.25,0+\j);
+      }
+      \foreach \i/\v in {0/0111,1/0000,2/1100,3/0010,4/0001}{
+          \FPeval{\y}{1-.2+\i*.1};
+          \node[] at (1,-1+\y) {\v};
+      }
+      %TODO: add ports
+      \node(p0) at (.5,-.5) {PORT0};
+      %TODO: add xors
+      \node(x0)[inner sep=0pt] at (.5,0){$\oplus$};
+      %TODO: add connections
+      \draw[->] (.25, 1) -| (x0);
+      \draw[->] (.25, 0) -- (x0);
+      \draw[->] (x0) -- (p0);
+      %TODO: add ports
+      \node(p1) at (1.5,-.5) {PORT1};
+      %TODO: add xors
+      \node(x1)[inner sep=0pt] at (1.5,0){$\oplus$};
+      %TODO: add connections
+      \draw[->] (1.25, 1) -| (x1);
+      \draw[->] (1.25, 0) -- (x1);
+      \draw[->] (x1) -- (p1);
+      %TODO: add emulated ports
+      \node(ep0) at (1.25, 2.1) {PORT0};
+      \node(ep1) at (1.25, 1.9) {PORT1};
+      \draw (.75,2) -- (.9,2);
+      \draw[->] (.9,2) |- (ep0);
+      \draw[->] (.9,2) |- (ep1);
+    \end{tikzpicture}
+    \caption{Clock cycle 1.}
+  \end{subfigure}
+  \caption{XOR Multiport memory.}
+  \label{fig:xor_example}
+  \Description{An illustration.}
+\end{figure}
+
+\begin{figure*}
   %\includegraphics[width=\textwidth]{sampleteaser}
-  \begin{center}
+  \centering
+  %\begin{center}
   %\begin{scaletikzpicturetowidth}{\textwidth}
   \begin{tikzpicture}[scale=1.3]
   \foreach \x in {0,1,2,3,4,5} {
@@ -213,54 +387,53 @@ We evaluate the architecture's performance and resource utilization, showing tha
   \draw[->] (x03b) -- (bport0.10);
   \end{tikzpicture}
   %\end{scaletikzpicturetowidth}
-  \end{center}
+  %\end{center}
   \caption{A multi-port memory with 2 full ports, 2 write-only ports and 2 read-only ports.}
   \Description{Enjoying the baseball game from the third-base
   seats. Ichiro Suzuki preparing to bat.}
   \label{fig:teaser}
-\end{teaserfigure}
+\end{figure*}
 
-\received{20 February 2007}
-\received[revised]{12 March 2009}
-\received[accepted]{5 June 2009}
-
-%%
-%% This command processes the author and affiliation and title
-%% information and builds the first part of the formatted document.
-\maketitle
-
-\section{Motivation}
-
-As computation needs keep increasing, one way to keep up with Moore's Law has been
+As computation needs keep increasing, one way to keep up has been
 specialized architectures. FPGAs provide a way to implement architectures without taping out an ASIC.
 However, the limitations of FPGA resources means some creativity is needed to map designs to FPGAs.
 This paper explores the limitation of FPGAs in the fact that FPGA memories have a limited number of
 ports. Specifically we look at creating memories with more than 2 ports.
 
-The 3 major FPGA vendors\cite{amd20,intel24,lattice21} implement distributed memory (small memories) and block memory (large memories)
-differently, however they share some characteristics.
-
-All 3 vendors support distributed memory configurations with 1 full port and between 1 to 3 read ports.
-
-All 3 vendors support block memory with 2 full ports. None of the vendors support memories with more than 2 full ports.
-
-Although this limitation is problematic for designs requiring multiple ports particularly write or full ports, we show that these resources make it possible to achieve high throughput quad and octal full port memories.
+The major FPGA vendors (AMD\cite{amd20}, Intel\cite{intel24}, Lattice\cite{lattice21}, Micro\-chip\cite{microchip_polarfire_fabric}, Achronix\cite{achronix_ds015}) implement distributed memory (small memories) and block memory (large memories)
+differently, however they share some characteristics. All vendors support distributed memory configurations with 1 full or write port and between 1 to 3 read ports. All vendors support block memory with 2 full ports. None of the vendors support memories with more than 2 full ports. Although this limitation is problematic for designs requiring multiple ports particularly write or full ports, we show that these resources make it possible to achieve high throughput quad and octal full port memories.
 
 \section{Source Code}
 We provide all of the source code used in implementation and testing our design at
-https://anonymous.4open.science/r/mpm-7666/. We tested our design with Verilator and implemented the design
-with Vivado (Xilinx/AMD).
+https://anonymous.4open.science/r/mpm-7666/. We tested our design with Verilator\cite{verilator_manual} and implemented the design
+with Vivado\cite{ug893}.
+
+\section{Related Work}
+
+Several solutions to the port limit on FPGAs other than what is presented here.
+For example multi-pumping and banking. multi-pumping is the process of reducing
+the clock speed to increase the number of ports. For example a 300Mhz single
+port memory can handle 2 150Mhz ports. Banking requires stalls and routing logic
+due to the segmented memory. Our design is most similar to replication. Replication involves tying the write ports of multiple memories together to create additional read ports.
 
 \section{XOR memory}
 
+%TODO: move up to page 1.
+%TODO: add figure with 2 subfigures
 We propose a simple generalization to XOR memories presented in previous work\cite{laforest14}.
 XOR memories work by using the $a \oplus b \oplus b = a$ property. We add bidirectional
 ports and analyze the perforamance of distributed memory and block memory
 versions of this design. We also present applications for these memories.
 
-%TODO: fix wording. There is no analysis on xor memories.
-
-The number of RAMs needed is: $(W+F)(W+F+R)-W$, which expands to: $W^2 + 2WF + F^2 + WR + FR - W$. Where $W$ is the number of write ports, $R$ is the number of read ports and $F$ is the number of full ports.
+The number of RAMs needed is:
+\begin{equation}
+(W+F)(W+F+R)-W
+\end{equation}
+Which expands to:
+\begin{equation}
+W^2 + 2WF + F^2 + WR + FR - W
+\end{equation}
+Where $W$ is the number of write ports, $R$ is the number of read ports and $F$ is the number of full ports.
 
 Reading data from an XOR memory simply involves XORing all of the data from the RAMs in one column from the same address. For example say address $x$ has values $A$, $B$, $C$ and $D$, the data read would be $A\oplus B\oplus C \oplus D$.
 
@@ -271,6 +444,46 @@ The next time that data is read the result will be $A\oplus B \oplus (A \oplus B
 You may notice that writing to a port involves XORing all but one stored value and reading involves XORing all values. This enables full ports to be created just by adding one RAM to what would otherwise be just a write port.
 
 Note that this memory requires that all of the RAMs in a row have the same data. Initializing the rams to the same data (e.g. all 0s) is required for the memory to operate properly. This is not an issue in FPGAs since the memory can be initialized to 0. since rows are written to at the same time as long as the memories are intially the same they will remain the same.
+
+\section{Analysis of XOR memory}
+
+We analyze several configurations of XOR memories. Particularly we vary the number of port and width of the memory.
+
+TODO: Analysis of varying the ports.
+
+TODO: Analysis of varying the width.
+\begin{table}
+  \caption{Synthesis results of XOR memory for different port counts}
+  \label{tab:syn}
+  \begin{tabular}{llllll}
+    \toprule
+    Ports & LUTS & \thead{LUTS\\ configured\\ as memory} & FF & BRAM & Max Frequency\\
+    \midrule
+    2 & 1,492 & 1,216 & 0 & 0 & 370Mhz\\
+    4 & 6,312 & 5,248 & 0 & 0 & 317Mhz\\
+    8 & 26,576 & 21,760 & 0 & 0 & 241Mhz\\
+    16\footnotemark[1] & 107,424 & 88,576 & 0 & 0 & XMhz\\
+    32\footnotemark[2] & 435,008 & 357,376 & 0 & 0 & 0Mhz\\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\begin{table}
+  \caption{Synthesis results of XOR memory for different widths}
+  \label{tab:syn}
+  \begin{tabular}{llllll}
+    \toprule
+    Width & LUTS & \thead{LUTS\\ configured\\ as memory} & FF & BRAM & Max Frequency\\
+    \midrule
+    1 & 1,492 & 1,216 & 0 & 0 & 370Mhz\\
+    2 & 6,312 & 5,248 & 0 & 0 & 317Mhz\\
+    4 & 26,576 & 21,760 & 0 & 0 & XMhz\\
+    8 & 16,544 & 0 & 0 & 0 & XMhz\\
+    16 & 85,728 & 0 & 0 & 0 & XMhz\\
+    32 & 85,728 & 0 & 0 & 0 & XMhz\\
+    \bottomrule
+  \end{tabular}
+\end{table}
 
 \section{Live Value Table Memory}
 \begin{figure}
@@ -376,7 +589,7 @@ Instead of using a register based live-value table as in \cite{choi12} we use a 
 
 We show we utilize x\% less resources than LVT and I-LVT.
 
-\section{Implementation of LVT}
+\section{Analysis of LVT Memory}
 
 We explore LVT designs with 2 to 32 ports. Although 16 and 32 port designs fit on large FPGAs, we believe smaller 4 and 8 port designs are more practical. We say
 more practical because of the high resource usage of XOR and LVT memories at high port counts.
