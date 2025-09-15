@@ -1,7 +1,7 @@
 module xor_distributed_memory #(
   parameter WIDTH = 32,
   parameter DEPTH = 512,
-  parameter PORTS = 32)(
+  parameter PORTS = 8)(
 
   input clk,
   input [$clog2(DEPTH)-1:0]addr[PORTS-1:0],
