@@ -6,7 +6,7 @@ module lvt_memory_syn_pipelined(
 );
 parameter WIDTH=32;
 parameter DEPTH=512;
-parameter PORTS=16;
+parameter PORTS=2;
 
 logic [$clog2(DEPTH)-1:0]addr[PORTS-1:0];
 logic [$clog2(DEPTH)-1:0]addr_buffered[1:0][PORTS-1:0];
