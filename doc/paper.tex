@@ -114,6 +114,129 @@ We evaluate the architecture's performance and resource utilization, showing tha
 \maketitle
 
 \section{Motivation}
+
+\begin{figure*}
+  %\includegraphics[width=\textwidth]{sampleteaser}
+  \centering
+  %\begin{center}
+  %\begin{scaletikzpicturetowidth}{\textwidth}
+  \begin{tikzpicture}[scale=1.3]
+  \foreach \x in {0,1,2,3,4,5} {
+    \foreach \y in {0,1,2,3} {
+      \ifthenelse{\(\x = 2 \AND \y = 1\) \OR \(\x = 3 \AND \y = 0\)}{}{
+        \node (r\x\y)[trapezium, trapezium left angle=70, trapezium right angle=110, draw] at (2*\x, \y){RAM$_{\x,\y}$};
+      }
+    }
+  }
+  \foreach \x in {0,1,4,5} {
+    \node (bport\x)[] at (2*\x+1, -1){PORT\x};
+  }
+  \foreach \y in {0,1,2,3} {
+    \node (lport\y)[] at (-1.3, 3.5-\y){PORT\y};
+  }
+  %TODO: fix connections
+  \node [rotate=90] at (-2, .8){WRITE PORTS};
+  \node [rotate=90] at (-2, 2.8){FULL PORTS};
+  \node [] at (1.5, -1.5){FULL PORTS};
+  \node [] at (9.5, -1.5){READ PORTS};
+  \node(x50)[inner sep=0pt] at (10.8, 0){$\oplus$};
+  \node(x51)[inner sep=0pt] at (10.8, 1){$\oplus$};
+  \node(x52)[inner sep=0pt] at (10.8, 2){$\oplus$};
+  \draw[->] (r50) -- (x50);
+  \draw[->] (r51) -- (x51);
+  \draw[->] (r52) -- (x52);
+  \draw[->] (r53) -| (x52);
+  \draw[->] (x52) -- (x51);
+  \draw[->] (x51) -- (x50);
+  \draw[->] (x50) -- (bport5.130);
+  \node(x40)[inner sep=0pt] at (8.8, 0){$\oplus$};
+  \node(x41)[inner sep=0pt] at (8.8, 1){$\oplus$};
+  \node(x42)[inner sep=0pt] at (8.8, 2){$\oplus$};
+  \draw[->] (r40) -- (x40);
+  \draw[->] (r41) -- (x41);
+  \draw[->] (r42) -- (x42);
+  \draw[->] (r43) -| (x42);
+  \draw[->] (x42) -- (x41);
+  \draw[->] (x41) -- (x40);
+  \draw[->] (x40) -- (bport4.130);
+  \node(x31)[inner sep=0pt] at (6.8, 1){$\oplus$};
+  \node(x32)[inner sep=0pt] at (6.8, 2){$\oplus$};
+  \node(x30)[inner sep=0pt] at (6.8, .5){$\oplus$};
+  \draw[->] (r31) -- (x31);
+  \draw[->] (r32) -- (x32);
+  \draw[->] (r33) -| (x32);
+  \draw[->] (x32) -- (x31);
+  \draw[->] (x31) -- (x30);
+  %PORT3 connections.
+  \draw[->] (lport3) -- (x30);
+  \draw[->] (x30) |- (-.6,.3) |- (r00);
+  \draw[->] (1.4,.3) |- (r10);
+  \draw[->] (3.4,.3) |- (r20);
+  \draw[->] (6.8, .3) -| (7.4,0) -- (r40);
+  \draw[->] (7.4, .3) -| (9.4,0) -- (r50);
+  %PORT2 XORs
+  \node(x22)[inner sep=0pt] at (4.8, 2){$\oplus$};
+  \node(x21)[inner sep=0pt] at (4.8, 1.5){$\oplus$};
+  %PORT2 connections
+  \draw[->] (lport2) -- (x21);
+  \draw[->] (r23) -| (x22);
+  \draw[->] (r22) -- (x22);
+  \draw[->] (x22) -- (x21);
+  \draw[->] (r20) -| (x21);
+  \draw[->] (x21) -| (5,1.3) -| (-.6,1) -- (r01);
+  \draw[->] (1.4,1.3) |- (r11);
+  \draw[->] (5,1.3) -- (9.4, 1.3) |- (r51);
+  \draw[->] (7.4, 1.3) |- (r41);
+  \draw[->] (5.4, 1.3) |- (r31);
+  %draw xor of full ports
+  %PORT1
+  \node(x11)[inner sep=0pt] at (2.8, 1){$\oplus$};
+  \node(x12)[inner sep=0pt] at (3.3, 2.5){$\oplus$};
+  \node(x12b)[inner sep=0pt] at (3, 2){$\oplus$};
+  \node(x13)[inner sep=0pt] at (2.8, 3){$\oplus$};
+  \draw[->] (r10) -| (x11);
+  \draw[->] (r11) -- (x11);
+  \draw[->] (lport1) -- (x12);
+  \draw[->] (x11) -- (x13);
+  \draw[->] (r13) -- (x13);
+  \draw[->] (x13) -| (x12);
+  \draw[->] (r12) -- (x12b);
+  \draw[->] (x12) -| (3.3, 2.3) -| (-.6,2) -- (r02);
+  \draw[->] (1.4,2.3) |- (r12);
+  \draw[->] (3.3, 2.3) -- (9.4, 2.3) |- (r52);
+  \draw[->] (3.4, 2.3) |- (r22);
+  \draw[->] (5.4, 2.3) |- (r32);
+  \draw[->] (7.4, 2.3) |- (r42);
+  \draw[->] (x13) -| (x12b);
+  \draw[->] (x12b) -- (bport1);
+  %PORT0
+  \node(x01)[inner sep=0pt] at (0.8, 1){$\oplus$};
+  \node(x02)[inner sep=0pt] at (0.8, 2){$\oplus$};
+  \node(x03)[inner sep=0pt] at (0.8, 3.5){$\oplus$};
+  \node(x03b)[inner sep=0pt] at (1.0, 2.8){$\oplus$};
+  \draw[->] (r00) -| (x01);
+  \draw[->] (r01) -- (x01);
+  \draw[->] (x01) -- (x02);
+  \draw[->] (x02) -- (x03);
+  \draw[->] (lport0) -- (x03);
+  \draw[->] (x03) -| (1, 3.3) -| (-.6,3) -- (r03);
+  \draw[->] (1, 3.3) -- (9.4, 3.3) |- (r53);
+  \draw[->] (1.4, 3.3) |- (r13);
+  \draw[->] (3.4, 3.3) |- (r23);
+  \draw[->] (5.4, 3.3) |- (r33);
+  \draw[->] (7.4, 3.3) |- (r43);
+  \draw[->] (.8, 2.8) -- (x03b);
+  \draw[->] (r02) -- (x02);
+  \draw[->] (r03) -| (x03b);
+  \draw[->] (x03b) -- (bport0);
+  \end{tikzpicture}
+  %\end{scaletikzpicturetowidth}
+  %\end{center}
+  \caption{A multi-port memory with 2 full ports, 2 write-only ports and 2 read-only ports.}
+  \Description{Enjoying the baseball game from the third-base
+  seats. Ichiro Suzuki preparing to bat.}
+  \label{fig:teaser}
+\end{figure*}
 \begin{figure}
   \centering
   \begin{subfigure}[t]{0.45\textwidth}
@@ -272,128 +395,6 @@ We evaluate the architecture's performance and resource utilization, showing tha
   \Description{An illustration.}
 \end{figure}
 
-\begin{figure*}
-  %\includegraphics[width=\textwidth]{sampleteaser}
-  \centering
-  %\begin{center}
-  %\begin{scaletikzpicturetowidth}{\textwidth}
-  \begin{tikzpicture}[scale=1.3]
-  \foreach \x in {0,1,2,3,4,5} {
-    \foreach \y in {0,1,2,3} {
-      \ifthenelse{\(\x = 2 \AND \y = 1\) \OR \(\x = 3 \AND \y = 0\)}{}{
-        \node (r\x\y)[trapezium, trapezium left angle=70, trapezium right angle=110, draw] at (2*\x, \y){RAM$_{\x,\y}$};
-      }
-    }
-  }
-  \foreach \x in {0,1,4,5} {
-    \node (bport\x)[] at (2*\x+.5, -1){PORT\x};
-  }
-  \foreach \y in {0,1,2,3} {
-    \node (lport\y)[rotate=90] at (-1.5, 3-\y){PORT\y};
-  }
-  %TODO: fix connections
-  \node [rotate=90] at (-2, .5){WRITE PORTS};
-  \node [rotate=90] at (-2, 2.5){FULL PORTS};
-  \node [] at (1.5, -1.5){FULL PORTS};
-  \node [] at (9.5, -1.5){READ PORTS};
-  \node(x50)[inner sep=0pt] at (10.8, 0){$\oplus$};
-  \node(x51)[inner sep=0pt] at (10.8, 1){$\oplus$};
-  \node(x52)[inner sep=0pt] at (10.8, 2){$\oplus$};
-  \draw[->] (r50) -- (x50);
-  \draw[->] (r51) -- (x51);
-  \draw[->] (r52) -- (x52);
-  \draw[->] (r53) -| (x52);
-  \draw[->] (x52) -- (x51);
-  \draw[->] (x51) -- (x50);
-  \draw[->] (x50) -- (bport5.30);
-  \node(x40)[inner sep=0pt] at (8.8, 0){$\oplus$};
-  \node(x41)[inner sep=0pt] at (8.8, 1){$\oplus$};
-  \node(x42)[inner sep=0pt] at (8.8, 2){$\oplus$};
-  \draw[->] (r40) -- (x40);
-  \draw[->] (r41) -- (x41);
-  \draw[->] (r42) -- (x42);
-  \draw[->] (r43) -| (x42);
-  \draw[->] (x42) -- (x41);
-  \draw[->] (x41) -- (x40);
-  \draw[->] (x40) -- (bport4.30);
-  \node(x31)[inner sep=0pt] at (6.8, 1){$\oplus$};
-  \node(x32)[inner sep=0pt] at (6.8, 2){$\oplus$};
-  \node(x30)[inner sep=0pt] at (6.8, .5){$\oplus$};
-  \draw[->] (r31) -- (x31);
-  \draw[->] (r32) -- (x32);
-  \draw[->] (r33) -| (x32);
-  \draw[->] (x32) -- (x31);
-  \draw[->] (x31) -- (x30);
-  %PORT3 connections.
-  \draw[->] (lport3.340) -- (x30);
-  \draw[->] (x30) |- (-.5,.3) |- (r00);
-  \draw[->] (1.5,.3) |- (r10);
-  \draw[->] (3.5,.3) |- (r20);
-  \draw[->] (6.8, .3) -| (7.5,0) -- (r40);
-  \draw[->] (7.5, .3) -| (9.5,0) -- (r50);
-  %PORT2 XORs
-  \node(x22)[inner sep=0pt] at (4.8, 2){$\oplus$};
-  \node(x21)[inner sep=0pt] at (4.8, 1.5){$\oplus$};
-  %PORT2 connections
-  \draw[->] (lport2.340) -- (x21);
-  \draw[->] (r23) -| (x22);
-  \draw[->] (r22) -- (x22);
-  \draw[->] (x22) -- (x21);
-  \draw[->] (r20) -| (x21);
-  \draw[->] (x21) -| (5,1.3) -| (-.5,1) -- (r01);
-  \draw[->] (1.5,1.3) |- (r11);
-  \draw[->] (5,1.3) -- (9.5, 1.3) |- (r51);
-  \draw[->] (7.5, 1.3) |- (r41);
-  \draw[->] (5.5, 1.3) |- (r31);
-  %draw xor of full ports
-  %PORT1
-  \node(x11)[inner sep=0pt] at (2.8, 1){$\oplus$};
-  \node(x12)[inner sep=0pt] at (3.3, 2.5){$\oplus$};
-  \node(x12b)[inner sep=0pt] at (3, 2){$\oplus$};
-  \node(x13)[inner sep=0pt] at (2.8, 3){$\oplus$};
-  \draw[->] (r10) -| (x11);
-  \draw[->] (r11) -- (x11);
-  \draw[->] (lport1.340) -- (x12);
-  \draw[->] (x11) -- (x13);
-  \draw[->] (r13) -- (x13);
-  \draw[->] (x13) -| (x12);
-  \draw[->] (r12) -- (x12b);
-  \draw[->] (x12) -| (3.3, 2.3) -| (-.5,2) -- (r02);
-  \draw[->] (1.5,2.3) |- (r12);
-  \draw[->] (3.3, 2.3) -- (9.5, 2.3) |- (r52);
-  \draw[->] (3.5, 2.3) |- (r22);
-  \draw[->] (5.5, 2.3) |- (r32);
-  \draw[->] (7.5, 2.3) |- (r42);
-  \draw[->] (x13) -| (x12b);
-  \draw[->] (x12b) -- (bport1.10);
-  %PORT0
-  \node(x01)[inner sep=0pt] at (0.8, 1){$\oplus$};
-  \node(x02)[inner sep=0pt] at (0.8, 2){$\oplus$};
-  \node(x03)[inner sep=0pt] at (0.8, 3.5){$\oplus$};
-  \node(x03b)[inner sep=0pt] at (1.0, 2.8){$\oplus$};
-  \draw[->] (r00) -| (x01);
-  \draw[->] (r01) -- (x01);
-  \draw[->] (x01) -- (x02);
-  \draw[->] (x02) -- (x03);
-  \draw[->] (lport0.340) -- (x03);
-  \draw[->] (x03) -| (1, 3.3) -| (-.5,3) -- (r03);
-  \draw[->] (1, 3.3) -- (9.5, 3.3) |- (r53);
-  \draw[->] (1.5, 3.3) |- (r13);
-  \draw[->] (3.5, 3.3) |- (r23);
-  \draw[->] (5.5, 3.3) |- (r33);
-  \draw[->] (7.5, 3.3) |- (r43);
-  \draw[->] (.8, 2.8) -- (x03b);
-  \draw[->] (r02) -- (x02);
-  \draw[->] (r03) -| (x03b);
-  \draw[->] (x03b) -- (bport0.10);
-  \end{tikzpicture}
-  %\end{scaletikzpicturetowidth}
-  %\end{center}
-  \caption{A multi-port memory with 2 full ports, 2 write-only ports and 2 read-only ports.}
-  \Description{Enjoying the baseball game from the third-base
-  seats. Ichiro Suzuki preparing to bat.}
-  \label{fig:teaser}
-\end{figure*}
 
 As computation needs keep increasing, one way to keep up has been
 specialized architectures. FPGAs provide a way to implement architectures without taping out an ASIC.
@@ -411,6 +412,7 @@ with Vivado\cite{ug893}.
 
 \section{Related Work}
 
+%TODO: add citations
 Several solutions to the port limit on FPGAs other than what is presented here.
 For example multi-pumping and banking. multi-pumping is the process of reducing
 the clock speed to increase the number of ports. For example a 300Mhz single
@@ -460,8 +462,13 @@ TODO: Analysis of varying the ports.
 Table \ref{tab:syn_xor_ports} we show the varying resources and frequency of the memory for different numbers of ports. As seen the number of LUTs used for memory is relatively large particularly for more ports.
 
 TODO: Analysis of varying the width.
+In table \ref{tab:syn_xor_width}
 
 TODO: Analysis with pipelining.
+In table \ref{tab:syn_xor_bram_ports} we show an implementation using Block RAMs. This required pipelining and introducing a cycle of write delay. One could change the block ram to be write before read to remove the cycle of write delay.
+
+
+
 
 \begin{table}
   \caption{Synthesis results of XOR memory for different port counts. The memory has a depth of 1024 and width of 32bits.}
@@ -481,7 +488,7 @@ TODO: Analysis with pipelining.
 
 \begin{table}
   \caption{Synthesis results of XOR memory with block RAMs for different port counts}
-  \label{tab:syn}
+  \label{tab:syn_xor_bram_ports}
   \begin{tabular}{llllll}
     \toprule
     Ports & LUTS & \thead{LUTS\\ configured\\ as memory} & FF & BRAM & Max Frequency\\
@@ -489,15 +496,15 @@ TODO: Analysis with pipelining.
     2 & 128 & 0 & 150 & 4 & 278Mhz\\
     4 & 256 & 0 & 300 & 16 & 269Mhz\\
     8 & 768 & 0 & 600 & 64 & 197Mhz\\
-    16\footnotemark[1] & 3072 & 0 & 1200 & 256 & XMhz\\
-    32\footnotemark[2] & 435,008 & 357,376 & 0 & 1024 & N/A\\
+    16\footnotemark[1] & 3,072 & 0 & 1,200 & 256 & XMhz\\
+    32\footnotemark[1] & 10,240 & 0 & 2,400 & 1024 & XMhz\\
     \bottomrule
   \end{tabular}
 \end{table}
 
 \begin{table}
   \caption{Synthesis results of XOR memory for different widths}
-  \label{tab:syn}
+  \label{tab:syn_xor_width}
   \begin{tabular}{llllll}
     \toprule
     Width & LUTS & \thead{LUTS\\ configured\\ as memory} & FF & BRAM & Max Frequency\\
@@ -514,7 +521,7 @@ TODO: Analysis with pipelining.
 
 \section{Live Value Table Memory}
 \begin{figure}
-  \begin{tikzpicture}[xscale=1.8]
+  \begin{tikzpicture}[xscale=2]
   %draw rams
   \foreach \x in {0,1,2,3} {
     \foreach \y in {0,1,2,3} {
@@ -528,87 +535,114 @@ TODO: Analysis with pipelining.
   }
   %draw a ports
   \foreach \x in {0,1,2,3} {
-    \node(xport\x) at (\x, -1) {\x};
+    %\node(xport\x) at (\x, -1) {\x};
   }
   %draw b ports
   \foreach \y in {0,1,2,3} {
-    \node(yport\y) at (-1, 3-\y) {\y};
+    %\node(yport\y) at (-1, 3-\y) {\y};
   }
   %draw connections
-  %x0 connections
-  \draw (xport0) .. controls (.8,-1) and (.8,2) .. (r10.east);
-  \draw (xport0) .. controls (.6,-1) and (.7,1) .. (r20.east);
-  \draw (xport0) .. controls (.4,-1) and (.6,0) .. (r30.east);
-  %x1 connections
-  \draw (xport1) .. controls (1.6,-1) and (1.7,1) .. (r21);
-  \draw (xport1) .. controls (1.4,-1) and (1.6,0) .. (r31);
-  %x2 connection
-  \draw (xport2) .. controls (2.4,-1) and (2.6,0) .. (r32);
-  %y1 connection
-  \draw (yport1) .. controls (-1, 2.5) and (0, 2.5) .. (r10);
-  %y2 connections
-  \draw (yport2) .. controls (-1, 1.4) and (0, 1.4) .. (r20);
-  \draw (yport2) .. controls (-1, 1.6) and (1, 1.6) .. (r21);
-  %y3 connections
-  \draw (yport3) .. controls (-1, 0.4) and (0, 0.4) .. (r30);
-  \draw (yport3) .. controls (-1, 0.6) and (1, 0.6) .. (r31);
-  \draw (yport3) .. controls (-1, 0.8) and (2, 0.8) .. (r32);
-  %draw labels
-  \node at (-1.5, 1)[rotate=90]{Ports};
-  \node at (1, -1.5){Ports};
+  %TODO: fix connections.
+  \draw[<->] (r10.east) -| (.6,-.6) -| (.1,-1);
+  \draw[->] (.2,-.6) -- (.2,-1);
+  \draw[<->] (r20.east) -| (.5,-.5) -| (.0,-1);
+  \draw[<->] (r30.east) -| (.4,-.4) -| (-.1,-1);
+  \draw[<->] (r10) |- (1.6, 2.4) |- (1.2, -.6) -- (1.2,-1);
+  \draw[->] (1.2,-.6) -| (1.1,-1);
+  \draw[<->] (r21) -| (1.5,-.5) -| (1,-1);
+  \draw[<->] (r31) -| (1.4,-.4) -| (.9,-1);
+  \draw[<->] (r20) |- (2.5,1.5) |- (2.2, -.6) -- (2.2,-1);
+  \draw[<->] (r21) |- (2.4,1.4) |- (2.1, -.5) -- (2.1,-1);
+  \draw[->] (2.1,-.6) -| (2.0,-1);
+  \draw[<->] (r32) -| (2.4,-.4) -| (1.9,-1);
+  \draw[<->] (r30) |- (3.2,.6) -- (3.2,-1);
+  \draw[<->] (r31) |- (3.1,.5) -- (3.1,-1);
+  \draw[<->] (r32) |- (3.0,.4) -- (3.0,-1);
+  \draw[->] (3.0,-.6) -| (2.9,-1);
+%  %x0 connections
+%  \draw (xport0) .. controls (.8,-1) and (.8,2) .. (r10.east);
+%  \draw (xport0) .. controls (.6,-1) and (.7,1) .. (r20.east);
+%  \draw (xport0) .. controls (.4,-1) and (.6,0) .. (r30.east);
+%  %x1 connections
+%  \draw (xport1) .. controls (1.6,-1) and (1.7,1) .. (r21);
+%  \draw (xport1) .. controls (1.4,-1) and (1.6,0) .. (r31);
+%  %x2 connection
+%  \draw (xport2) .. controls (2.4,-1) and (2.6,0) .. (r32);
+%  %y1 connection
+%  \draw (yport1) .. controls (-1, 2.5) and (0, 2.5) .. (r10);
+%  %y2 connections
+%  \draw (yport2) .. controls (-1, 1.4) and (0, 1.4) .. (r20);
+%  \draw (yport2) .. controls (-1, 1.6) and (1, 1.6) .. (r21);
+%  %y3 connections
+%  \draw (yport3) .. controls (-1, 0.4) and (0, 0.4) .. (r30);
+%  \draw (yport3) .. controls (-1, 0.6) and (1, 0.6) .. (r31);
+%  \draw (yport3) .. controls (-1, 0.8) and (2, 0.8) .. (r32);
+%  %draw labels
+%  \node at (-1.5, 1)[rotate=90]{Ports};
+%  \node at (1, -1.5){Ports};
   %draw muxes
   \draw[xshift=-.2cm,yshift=-1cm] (0,0) -- (.1,-.2) -- (.4,-.2) -- (.5,0) -- cycle;
   \draw[xshift=.8cm,yshift=-1cm] (0,0) -- (.1,-.2) -- (.4,-.2) -- (.5,0) -- cycle;
   \draw[xshift=1.8cm,yshift=-1cm] (0,0) -- (.1,-.2) -- (.4,-.2) -- (.5,0) -- cycle;
   \draw[xshift=2.8cm,yshift=-1cm] (0,0) -- (.1,-.2) -- (.4,-.2) -- (.5,0) -- cycle;
-  %TODO: draw LVT
-  %TODO: draw connections
+  %draw LVT
+  \node(lvt)[draw] at (1.5, -2) {LVT};
+  %draw LVT connections
+  \draw[->] (lvt) -- (.5,-2) |- (.25,-1.1);
+  \draw[->] (lvt.100) |- (1.25,-1.1);
+  \draw[->] (lvt.80) |- (1.85,-1.1);
+  \draw[->] (lvt) -- (2.5,-2) |- (2.85,-1.1);
+  %TODO: draw ports
+  \draw[<->] (.05,-1.2) -- (.05,-1.6) node[right,midway]{0};
+  \draw[<->] (1.05,-1.2) -- (1.05,-1.6) node[right,midway]{1};
+  \draw[<->] (2.05,-1.2) -- (2.05,-1.6) node[right,midway]{2};
+  \draw[<->] (3.05,-1.2) -- (3.05,-1.6) node[right,midway]{3};
   \end{tikzpicture}
-  \caption{Multi-port memory created with dual-port memories. Note, a live value table is needed to determine which memory has the most recent value.}
+ \caption{Multi-port memory created with bi-directional dual-port memories. Note, a live value table is needed to determine which memory has the most recent value.}
   \label{fig:lvt0}
   \Description{An illustration.}
 \end{figure}
 
-\begin{figure}
-  \begin{tikzpicture}[yscale=1.2]
-    \node(lvt)[draw] at (2.5, 1) {LVT};
-    \foreach \x in {0,1,2,3}{
-    \node(mux\x)[draw,trapezium, rotate=-90,inner sep=5pt] at (2*\x,0){};
-    \node(mux\x port0) at (2*\x-.7,.3){0};
-    \node(mux\x port1) at (2*\x-.7,.1){1};
-    \node(mux\x port2) at (2*\x-.7,-.1){2};
-    \node(mux\x port3) at (2*\x-.7,-.3){3};
-    \ifthenelse{\x=0}{
-    \draw[->,dashed] (mux\x port0) -- (mux\x.210);
-    }{
-    \draw[->] (mux\x port0) -- (mux\x.210);
-    }
-    \ifthenelse{\x=1}{
-    \draw[->,dashed] (mux\x port1) -- (mux\x.240);
-    }{
-    \draw[->] (mux\x port1) -- (mux\x.240);
-    }
-    \ifthenelse{\x=2}{
-    \draw[->,dashed] (mux\x port2) -- (mux\x.300);
-    }{
-    \draw[->] (mux\x port2) -- (mux\x.300);
-    }
-    \ifthenelse{\x=3}{
-    \draw[->,dashed] (mux\x port3) -- (mux\x.330);
-    }{
-    \draw[->] (mux\x port3) -- (mux\x.330);
-    }
-    \draw[->] (mux\x ) -- (2*\x+.5,0);
-    \node at (2*\x,-.5) {PORT\x};
-    }
-    \draw[->] (lvt) .. controls (0,.5) .. (mux0);
-    \draw[->] (lvt) .. controls (2,.5) .. (mux1);
-    \draw[->] (lvt) .. controls (4,.5) .. (mux2);
-    \draw[->] (lvt) .. controls (6,.5) .. (mux3);
-  \end{tikzpicture}
-  \caption{The live value table for the memory in figure \ref{fig:lvt0}.}
-  \Description{An illustration.}
-\end{figure}
+%\begin{figure}
+%  \begin{tikzpicture}[yscale=1.2]
+%    \node(lvt)[draw] at (2.5, 1) {LVT};
+%    \foreach \x in {0,1,2,3}{
+%    \node(mux\x)[draw,trapezium, rotate=-90,inner sep=5pt] at (2*\x,0){};
+%    \node(mux\x port0) at (2*\x-.7,.3){0};
+%    \node(mux\x port1) at (2*\x-.7,.1){1};
+%    \node(mux\x port2) at (2*\x-.7,-.1){2};
+%    \node(mux\x port3) at (2*\x-.7,-.3){3};
+%    \ifthenelse{\x=0}{
+%    \draw[->,dashed] (mux\x port0) -- (mux\x.210);
+%    }{
+%    \draw[->] (mux\x port0) -- (mux\x.210);
+%    }
+%    \ifthenelse{\x=1}{
+%    \draw[->,dashed] (mux\x port1) -- (mux\x.240);
+%    }{
+%    \draw[->] (mux\x port1) -- (mux\x.240);
+%    }
+%    \ifthenelse{\x=2}{
+%    \draw[->,dashed] (mux\x port2) -- (mux\x.300);
+%    }{
+%    \draw[->] (mux\x port2) -- (mux\x.300);
+%    }
+%    \ifthenelse{\x=3}{
+%    \draw[->,dashed] (mux\x port3) -- (mux\x.330);
+%    }{
+%    \draw[->] (mux\x port3) -- (mux\x.330);
+%    }
+%    \draw[->] (mux\x ) -- (2*\x+.5,0);
+%    \node at (2*\x,-.5) {PORT\x};
+%    }
+%    \draw[->] (lvt) .. controls (0,.5) .. (mux0);
+%    \draw[->] (lvt) .. controls (2,.5) .. (mux1);
+%    \draw[->] (lvt) .. controls (4,.5) .. (mux2);
+%    \draw[->] (lvt) .. controls (6,.5) .. (mux3);
+%  \end{tikzpicture}
+%  \caption{The live value table for the memory in figure \ref{fig:lvt0}.}
+%  \Description{An illustration.}
+%\end{figure}
 
 XOR memories can be used by themselves, however a live value table (LVT) may be more efficient.
 
@@ -617,7 +651,7 @@ We present a LVT memory that utilises distrubuted memory xor live value table.
 In \cite{laforest12} the live value table was implemented with registers. Previous work used
 distributed memory \cite{abdelhadi16}. However they did not use bidirectional xor ports in their implementation.
 
-We create a LVT memory using the technique described in \cite{choi12}. This live value memory is composed of 2-(full)port memories. Each port shares a RAM with another port. This results in $N(N-1)/2$ RAMs being needed. See figure (todo cite figure).
+We create a LVT memory using the technique described in \cite{choi12}. This live value memory is composed of 2-(full)port memories. Each port shares a RAM with another port. This results in $N(N-1)/2$ RAMs being needed. See figure \ref{fig:lvt0}.
 
 The memory gets its name because of a multi-port memory that tracks the most recent stored value (aka a live value table). The point of a multi-port memory that requires a multi-port memory is that wide (e.g. 32 bit data) can be stored more effeciently this way.
 
@@ -632,6 +666,8 @@ more practical because of the high resource usage of XOR and LVT memories at hig
 N**2 for XOR and N*(N-1)/2 for LVT. However we were able to synthesize a 32 port memory.
 
 Without write delay an 8 port memory runs at Xmhz (x\% of max). With write delay and pipelining the design runs at Xmhz (x\% of max).
+
+%TODO: reference tables and figures.
 
 \begin{figure}
   \begin{tikzpicture}
