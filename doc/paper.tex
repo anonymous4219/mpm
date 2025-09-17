@@ -667,7 +667,8 @@ N**2 for XOR and N*(N-1)/2 for LVT. However we were able to synthesize a 32 port
 
 Without write delay an 8 port memory runs at Xmhz (x\% of max). With write delay and pipelining the design runs at Xmhz (x\% of max).
 
-%TODO: reference tables and figures.
+TODO: reference tables and figures. See table \ref{tab:syn} and table \ref{tab:syn_pipelined}, and figure \ref{fig:lvt_frequency}.
+
 
 \begin{figure}
   \begin{tikzpicture}
@@ -698,14 +699,15 @@ Without write delay an 8 port memory runs at Xmhz (x\% of max). With write delay
     \draw (0, 4.76) -- (1, 5.00) -- (2, 4.51) -- (3, 2.84);
     \node[fill=red, draw, circle,inner sep=2pt,label={[rotate=30]right:476Mhz}] at (0,4.76){};
   \end{tikzpicture}
-  \caption{Frequency of design.}
+  \caption{Frequency of LVT design.}
+  \label{fig:lvt_frequency}
   \Description{A graph showing the frequency of the design for difference port counts.}
 \end{figure}
 
 \footnotetext{To reduce the number of IO ports and fit the design on the FPGA we used a wrapper for the multi-port memory for designs with 16 and 32 ports.}
 
 \begin{table}
-  \caption{Synthesis results for different port counts}
+  \caption{Synthesis results of LVT design for different port counts}
   \label{tab:syn}
   \begin{tabular}{llllll}
     \toprule
@@ -721,8 +723,8 @@ Without write delay an 8 port memory runs at Xmhz (x\% of max). With write delay
 \end{table}
 
 \begin{table}
-  \caption{Synthesis results for different port counts for pipelined design}
-  \label{tab:synpiped}
+  \caption{Synthesis results of LVT design for different port counts for pipelined design}
+  \label{tab:syn_pipelined}
   \begin{tabular}{llllll}
     \toprule
     Ports & LUTS & \thead{LUTS\\ configured\\ as memory} & FF & BRAM & Max Frequency\\
