@@ -134,7 +134,6 @@ We evaluate the architecture's performance and resource utilization, showing tha
   \foreach \y in {0,1,2,3} {
     \node (lport\y)[] at (-1.3, 3.5-\y){PORT\y};
   }
-  %TODO: fix connections
   \node [rotate=90] at (-2, .8){WRITE PORTS};
   \node [rotate=90] at (-2, 2.8){FULL PORTS};
   \node [] at (1.5, -1.5){FULL PORTS};
@@ -304,7 +303,7 @@ We evaluate the architecture's performance and resource utilization, showing tha
       \draw[->] (.25, 1) -| (x0);
       \draw[->] (.25, 0) -- (x0);
       \draw[->] (x0) -- (p0);
-      %TODO: draw emulated ram connections.
+      % draw emulated ram connections.
       \node(ep1) at (-.5,2) {PORT1};
       \draw[->] (ep1) -- (.25,2) node[midway,fill=white]{1000};
       \node(ep0) at (1.25,2) {PORT0};
@@ -365,23 +364,23 @@ We evaluate the architecture's performance and resource utilization, showing tha
           \FPeval{\y}{1-.2+\i*.1};
           \node[] at (1,-1+\y) {\v};
       }
-      %TODO: add ports
+      %add ports
       \node(p0) at (.5,-.5) {PORT0};
-      %TODO: add xors
+      % add xors
       \node(x0)[inner sep=0pt] at (.5,0){$\oplus$};
-      %TODO: add connections
+      %add connections
       \draw[->] (.25, 1) -| (x0);
       \draw[->] (.25, 0) -- (x0);
       \draw[->] (x0) -- (p0);
-      %TODO: add ports
+      %add ports
       \node(p1) at (1.5,-.5) {PORT1};
-      %TODO: add xors
+      %add xors
       \node(x1)[inner sep=0pt] at (1.5,0){$\oplus$};
-      %TODO: add connections
+      %add connections
       \draw[->] (1.25, 1) -| (x1);
       \draw[->] (1.25, 0) -- (x1);
       \draw[->] (x1) -- (p1);
-      %TODO: add emulated ports
+      %add emulated ports
       \node(ep0) at (1.25, 2.1) {PORT0};
       \node(ep1) at (1.25, 1.9) {PORT1};
       \draw (.75,2) -- (.9,2);
@@ -421,8 +420,6 @@ due to the segmented memory. Our design is most similar to replication. Replicat
 
 \section{XOR memory}
 
-%TODO: move up to page 1.
-%TODO: add figure with 2 subfigures
 We propose a simple generalization to XOR memories presented in previous work\cite{laforest14}.
 XOR memories work by using the following property:
 \begin{equation}
@@ -458,17 +455,13 @@ We provide a second example with figure \ref{fig:xor_example} showing a clock cy
 
 We analyze several configurations of XOR memories. Particularly we vary the number of ports and width of the memory.
 
-TODO: Analysis of varying the ports.
 Table \ref{tab:syn_xor_ports} we show the varying resources and frequency of the memory for different numbers of ports. As seen the number of LUTs used for memory is relatively large particularly for more ports.
 
-TODO: Analysis of varying the width.
-In table \ref{tab:syn_xor_width}
+As expected increasing the width of the memory resulted in a roughly linear increase in resource usage and a decrease in timing perforamance (see table \ref{tab:syn_xor_width}).
 
-TODO: Analysis with pipelining.
+TODO: Add table for varying the depth of the memory.
+
 In table \ref{tab:syn_xor_bram_ports} we show an implementation using Block RAMs. This required pipelining and introducing a cycle of write delay. One could change the block ram to be write before read to remove the cycle of write delay.
-
-
-
 
 \begin{table}
   \caption{Synthesis results of XOR memory for different port counts. The memory has a depth of 1024 and width of 32bits.}
@@ -525,7 +518,6 @@ In table \ref{tab:syn_xor_bram_ports} we show an implementation using Block RAMs
   %draw rams
   \foreach \x in {0,1,2,3} {
     \foreach \y in {0,1,2,3} {
-      %TODO: add subscripts.
       \ifthenelse{\x < \y}{
       \node(r\y\x)[trapezium, trapezium left angle=70, trapezium right angle=110, draw] at (\x,3-\y) {RAM$_{\x,\y}$};
       }{
@@ -542,7 +534,6 @@ In table \ref{tab:syn_xor_bram_ports} we show an implementation using Block RAMs
     %\node(yport\y) at (-1, 3-\y) {\y};
   }
   %draw connections
-  %TODO: fix connections.
   \draw[<->] (r10.east) -| (.6,-.6) -| (.1,-1);
   \draw[->] (.2,-.6) -- (.2,-1);
   \draw[<->] (r20.east) -| (.5,-.5) -| (.0,-1);
@@ -592,7 +583,7 @@ In table \ref{tab:syn_xor_bram_ports} we show an implementation using Block RAMs
   \draw[->] (lvt.100) |- (1.25,-1.1);
   \draw[->] (lvt.80) |- (1.85,-1.1);
   \draw[->] (lvt) -- (2.5,-2) |- (2.85,-1.1);
-  %TODO: draw ports
+  %draw ports
   \draw[<->] (.05,-1.2) -- (.05,-1.6) node[right,midway]{0};
   \draw[<->] (1.05,-1.2) -- (1.05,-1.6) node[right,midway]{1};
   \draw[<->] (2.05,-1.2) -- (2.05,-1.6) node[right,midway]{2};
@@ -663,12 +654,11 @@ We show we utilize x\% less resources than LVT and I-LVT.
 
 We explore LVT designs with 2 to 32 ports. Although 16 and 32 port designs fit on large FPGAs, we believe smaller 4 and 8 port designs are more practical. We say
 more practical because of the high resource usage of XOR and LVT memories at high port counts.
-N**2 for XOR and N*(N-1)/2 for LVT. However we were able to synthesize a 32 port memory.
+N**2 for XOR and N*(N-1)/2 for LVT. However we were able to synthesize a 32 port memory. Higher port counts also had worse timing performance (see table \ref{tab:syn} and figure \ref{fig:lvt_frequency}).
+
+To get better timing performance we created a pipelined version of the memory. This memory has major drawbacks: In addition to read delay the memory has write delay. The write delay means write conflicts occur on adjacent clock cycles not just current clock cycles. However we achieve better timing performance with this memory (see table \ref{tab:syn_pipelined} and figure \ref{fig:lvt_frequency}).
 
 Without write delay an 8 port memory runs at Xmhz (x\% of max). With write delay and pipelining the design runs at Xmhz (x\% of max).
-
-TODO: reference tables and figures. See table \ref{tab:syn} and table \ref{tab:syn_pipelined}, and figure \ref{fig:lvt_frequency}.
-
 
 \begin{figure}
   \begin{tikzpicture}
@@ -713,11 +703,11 @@ TODO: reference tables and figures. See table \ref{tab:syn} and table \ref{tab:s
     \toprule
     Ports & LUTS & \thead{LUTS\\ configured\\ as memory} & FF & BRAM & Max Frequency\\
     \midrule
-    2 & 127 & X & 0 & 1 & 455Mhz\\
-    4 & 640 & X & 0 & 6 & 364Mhz\\
-    8 & 3,012 & X & 0 & 28 & 278Mhz\\
-    16\footnotemark[1] & 16,544 & X & 0 & 120 & 146Mhz\\
-    32\footnotemark[1] & 85,728 & X & 0 & 496 & 67Mhz\\
+    2 & 191 & 96 & 0 & 1 & 455Mhz\\
+    4 & 1,144 & 896 & 0 & 6 & 364Mhz\\
+    8 & 5,428 & 3,968 & 0 & 28 & 278Mhz\\
+    16\footnotemark[1] & 31,075 & 24,064 & 0 & 120 & 146Mhz\\
+    32\footnotemark[1] & 161,216 & 129,536 & 0 & 496 & 67Mhz\\
     \bottomrule
   \end{tabular}
 \end{table}

@@ -5,8 +5,8 @@ module lvt_memory_syn(
   output logic q
 );
 parameter WIDTH=32;
-parameter DEPTH=512;
-parameter PORTS=32;
+parameter DEPTH=1024;
+parameter PORTS=2;
 
 logic [$clog2(DEPTH)-1:0]addr[PORTS-1:0];
 logic en[PORTS-1:0];
