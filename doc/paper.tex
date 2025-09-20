@@ -58,7 +58,7 @@ This paper also presents a novel and efficient architecture for creating live va
 This is achieved by exploiting the properties of XOR, allowing any data entry to be reconstructed by XORing the corresponding entries from all memory banks. The result is a high-throughput, coherent multi-ported memory that is particularly well-suited for implementation on FPGAs.
 
 We use an XOR memory with full ports to implement a live value table (LVT) design.
-We evaluate the architecture's performance and resource utilization, showing that it uses significantly less logic and can achieve higher frequencies for deep memory configurations compared to LVT-based designs. This makes the XOR-based bidirectional live value table a compelling alternative for applications requiring high-performance, flexible memory access.
+We evaluate the architecture's performance and resource utilization, and show that the XOR-based bidirectional live value table is a compelling alternative for applications requiring high-performance, flexible memory access.
 \end{abstract}
 
 %%
@@ -407,7 +407,7 @@ differently, however they share some characteristics. All vendors support distri
 \section{Source Code}
 We provide all of the source code used in implementation and testing our design at
 https://anonymous.4open.science/r/mpm-7666/. We tested our design with Verilator\cite{verilator_manual} and synthesized the design
-with Vivado\cite{ug893}.
+with Vivado\cite{ug893} targeting an AMD Virtex UltraScale+ HBM VU47P-3 FPGA.
 
 \section{Related Work}
 
@@ -425,6 +425,7 @@ XOR memories work by using the following property:
 \begin{equation}
 a \oplus b \oplus b = a
 \end{equation}
+Where $\oplus$ is the bitwise XOR operator.
 We add bidirectional
 ports and analyze the perforamance of distributed memory and block memory
 versions of this design. We also present applications for these memories.
@@ -642,7 +643,7 @@ We present a LVT memory that utilises distrubuted memory xor live value table.
 In \cite{laforest12} the live value table was implemented with registers. Previous work used
 distributed memory \cite{abdelhadi16}. However they did not use bidirectional xor ports in their implementation.
 
-We create a LVT memory using the technique described in \cite{choi12}. This live value memory is composed of 2-(full)port memories. Each port shares a RAM with another port. This results in $N(N-1)/2$ RAMs being needed. See figure \ref{fig:lvt0}.
+We create a LVT memory using the technique described in \cite{choi12}. This live value memory is composed of 2-(full)port memories. Each port shares a RAM with another port. This results in $F(F-1)/2$ RAMs being needed, where $F$ is the number of bi-directional (full) ports. See figure \ref{fig:lvt0}.
 
 The memory gets its name because of a multi-port memory that tracks the most recent stored value (aka a live value table). The point of a multi-port memory that requires a multi-port memory is that wide (e.g. 32 bit data) can be stored more effeciently this way.
 
@@ -654,7 +655,7 @@ We show we utilize x\% less resources than LVT and I-LVT.
 
 We explore LVT designs with 2 to 32 ports. Although 16 and 32 port designs fit on large FPGAs, we believe smaller 4 and 8 port designs are more practical. We say
 more practical because of the high resource usage of XOR and LVT memories at high port counts.
-N**2 for XOR and N*(N-1)/2 for LVT. However we were able to synthesize a 32 port memory. Higher port counts also had worse timing performance (see table \ref{tab:syn} and figure \ref{fig:lvt_frequency}).
+$F^2$ for XOR and $F(F-1)/2$ for LVT. However we were able to synthesize a 32 port memory. Higher port counts also had worse timing performance (see table \ref{tab:syn} and figure \ref{fig:lvt_frequency}).
 
 To get better timing performance we created a pipelined version of the memory. This memory has major drawbacks: In addition to read delay the memory has write delay. The write delay means write conflicts occur on adjacent clock cycles not just current clock cycles. However we achieve better timing performance with this memory (see table \ref{tab:syn_pipelined} and figure \ref{fig:lvt_frequency}).
 
@@ -703,11 +704,11 @@ Without write delay an 8 port memory runs at Xmhz (x\% of max). With write delay
     \toprule
     Ports & LUTS & \thead{LUTS\\ configured\\ as memory} & FF & BRAM & Max Frequency\\
     \midrule
-    2 & 191 & 96 & 0 & 1 & 455Mhz\\
-    4 & 1,144 & 896 & 0 & 6 & 364Mhz\\
-    8 & 5,428 & 3,968 & 0 & 28 & 278Mhz\\
-    16\footnotemark[1] & 31,075 & 24,064 & 0 & 120 & 146Mhz\\
-    32\footnotemark[1] & 161,216 & 129,536 & 0 & 496 & 67Mhz\\
+    2 & 191 & 96 & 0 & 1 & 588Mhz\\
+    4 & 1,144 & 896 & 0 & 6 & 556Mhz\\
+    8 & 5,428 & 3,968 & 0 & 28 & 455Mhz\\
+    16\footnotemark[1] & 31,075 & 24,064 & 0 & 120 & 250Mhz\\
+    32\footnotemark[1] & 161,216 & 129,536 & 0 & 496 & 127Mhz\\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -719,10 +720,10 @@ Without write delay an 8 port memory runs at Xmhz (x\% of max). With write delay
     \toprule
     Ports & LUTS & \thead{LUTS\\ configured\\ as memory} & FF & BRAM & Max Frequency\\
     \midrule
-    2 & 119 & 64 & 26 & 1 & 476Mhz\\
-    4 & 1,268 & 1,024 & 96 & 6 & 500Mhz\\
-    8 & 5,588 & 4,096 & 160 & 28 & 451Mhz\\
-    16\footnotemark[1] & 31,328 & 24,576 & 688 & 120 & 284Mhz\\
+    2 & 119 & 64 & 26 & 1 & 714Mhz\\
+    4 & 1,268 & 1,024 & 96 & 6 & 667Mhz\\
+    8 & 5,588 & 4,096 & 160 & 28 & 625Mhz\\
+    16\footnotemark[1] & 31,328 & 24,576 & 688 & 120 & 417Mhz\\
     32\footnotemark[1] & 162,960 & 131,072 & 2,480 & 496 & XMhz\\
     \bottomrule
   \end{tabular}
