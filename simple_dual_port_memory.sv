@@ -17,11 +17,7 @@ module simple_dual_port_memory #(
     end
   end
   always @(posedge clk) begin
-    if(addr_d==addr_q && WRITE_FIRST && en) begin
-      q <= d;
-    end else begin
-      q <= ram[addr_q];
-    end
+    q <= ram[addr_q];
   end
 
 endmodule // simple_dual_port_memory
