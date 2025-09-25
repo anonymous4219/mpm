@@ -440,7 +440,7 @@ The next time that data is read the result will be $A\oplus B \oplus (A \oplus B
 
 Note that writing to a port involves XORing all but one stored value and reading involves XORing all values. This enables full ports to be created just by adding one RAM to what would otherwise be just a write port.
 
-The number of RAMs ($N_{RAM}$) needed is:
+The number of RAMs ($N_{RAM}$) needed for this memory is:
 \begin{equation}
 N_{RAM}=(W+F)(W+F+R)-W
 \end{equation}
@@ -449,7 +449,7 @@ Where $W$ is the number of write ports, $R$ is the number of read ports and $F$ 
 N_{RAM}=W^2 + 2WF + F^2 + WR + FR - W
 \end{equation}
 
-Note that this memory requires that all of the RAMs in a row have the same data. Initializing the rams to the same data (e.g., all 0s) is required for the memory to operate properly. This is not an issue in FPGAs since the memory can be initialized to 0. since rows are written to at the same time, the same they will remain the same as long as the memories are initially the same.
+Note that this memory requires that all of the RAMs in a row have the same data. Initializing the rams to the same data (e.g., all 0s) is required for the memory to operate properly. This is not an issue in FPGAs since the memory can be initialized to 0. since rows are written to at the same time, they will remain the same as long as the memories are initially the same.
 
 We provide a second example with Figure \ref{fig:xor_example} showing two clock cycles of operation of an XOR memory with 2 full ports.
 
@@ -457,18 +457,16 @@ We provide a second example with Figure \ref{fig:xor_example} showing two clock 
 
 We analyze several configurations of XOR memories that vary the number of ports, width and depth of the memory. And show the look up table (LUT), flip-flop (FF), and block RAM (BRAM) usage. As well as the maximum frequency we were able to achieve on that memory configuration.
 
-Table \ref{tab:syn_xor_ports} shows the varying resources and frequency of the memory for different numbers of ports. As seen the number of LUTs used for memory is relatively large and particularly large for more ports.
+Table \ref{tab:syn_xor_ports} shows the varying resources and max frequency of the memory for different numbers of ports. As seen the number of LUTs used for memory is relatively large and particularly large for more ports.
 
-As expected increasing the width of the memory resulted in a roughly linear increase in resource usage and a decrease in timing perforamance (see Table \ref{tab:syn_xor_width}).
+Table \ref{tab:syn_xor_width} shows the varying resources and max frequency of the memory for different widths. As expected increasing the width of the memory resulted in a roughly linear increase in resource usage and a decrease in timing performance.
 
-Also as expected increasing the depth of the memory resulted in a roughly linear increase in resource usage and a decrease in timing performance (see Table \ref{tab:syn_xor_depth}).
+Table \ref{tab:syn_xor_depth} shows the varying resources and max frequency of the memory for different memory depths. Also as expected, increasing the depth of the memory resulted in a roughly linear increase in resource usage and a decrease in timing performance.
 
-In Table \ref{tab:syn_xor_bram_ports} we show results from an implementation using Block RAMs. This required pipelining and introducing a cycle of write delay. One could change the block ram to be write before read to remove the cycle of write delay.
-
-%TODO: explain.
+Table \ref{tab:syn_xor_bram_ports} shows results from an implementation using Block RAMs. This required pipelining and introducing a cycle of write delay. One could change the block ram to be write before read to remove the cycle of write delay.
 
 \begin{table}
-  \caption{Synthesis results of XOR memory for different port counts. The memory has a depth of 1024 and width of 32bits.}
+  \caption{Synthesis results of XOR memory for different port counts. The memory has a depth of 1024 and width of 32 bits.}
   \label{tab:syn_xor_ports}
   \begin{tabular}{llllll}
     \toprule
@@ -477,13 +475,15 @@ In Table \ref{tab:syn_xor_bram_ports} we show results from an implementation usi
     2 & 2,706 & 2,304 & 0 & 0 & 625Mhz\\
     4 & 11,556 & 9,728 & 0 & 0 & 500Mhz\\
     8 & 48,328 & 39,936 & 0 & 0 & 357Mhz\\
-    16\footnotemark[1] & 196,640 & 161,792 & 0 & 0 & XMhz\\
+    16\footnotemark[1] & 196,640 & 161,792 & 0 & 0 & 150Mhz\\
     32\footnotemark[2] & 794,688 & 651,264 & 0 & 0 & N/A\\
     \bottomrule
   \end{tabular}
 \end{table}
 
 \footnotetext[1]{To reduce the number of IO ports and fit the design on the FPGA we used a wrapper for the multi-port memory for designs with 16 and 32 ports.}
+
+\footnotetext[2]{This design used more resources than were available on the FPGA therefore we do not have timing for this design.}
 
 \begin{table}
   \caption{Synthesis results of XOR memory for different widths. The memory has a depth of 1024 and 8 ports.}
@@ -526,11 +526,11 @@ In Table \ref{tab:syn_xor_bram_ports} we show results from an implementation usi
     \toprule
     Ports & LUTs & \thead{LUTs\\ configured\\ as memory} & FFs & BRAMs & Max Frequency\\
     \midrule
-    2 & 128 & 0 & 150 & 4 & 278Mhz\\
-    4 & 256 & 0 & 300 & 16 & 269Mhz\\
-    8 & 768 & 0 & 600 & 64 & 197Mhz\\
-    16\footnotemark[1] & 3,072 & 0 & 1,200 & 256 & XMhz\\
-    32\footnotemark[1] & 10,240 & 0 & 2,400 & 1024 & XMhz\\
+    2 & 128 & 0 & 150 & 4 & 625Mhz\\
+    4 & 256 & 0 & 300 & 16 & 476Mhz\\
+    8 & 768 & 0 & 600 & 64 & 370Mhz\\
+    16\footnotemark[1] & 3,072 & 0 & 1,200 & 256 & 263Mhz\\
+    32\footnotemark[1] & 10,240 & 0 & 2,400 & 1024 & 123Mhz\\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -602,11 +602,12 @@ In Table \ref{tab:syn_xor_bram_ports} we show results from an implementation usi
   %draw LVT
   \node(lvt)[draw] at (1.5, -2) {LVT};
   %draw LVT connections
-  \draw[->] (lvt) -- (.5,-2) |- (.25,-1.1);
-  \draw[->] (lvt.100) |- (1.25,-1.1);
-  \draw[->] (lvt.80) |- (1.85,-1.1);
-  \draw[->] (lvt) -- (2.5,-2) |- (2.85,-1.1);
+  \draw[<->] (lvt) -- (.5,-2) |- (.25,-1.1);
+  \draw[<->] (lvt.100) |- (1.25,-1.1);
+  \draw[<->] (lvt.80) |- (1.85,-1.1);
+  \draw[<->] (lvt) -- (2.5,-2) |- (2.85,-1.1);
   %draw ports
+  \node[anchor=east] at (.05,-1.4) {PORT};
   \draw[<->] (.05,-1.2) -- (.05,-1.6) node[right,midway]{0};
   \draw[<->] (1.05,-1.2) -- (1.05,-1.6) node[right,midway]{1};
   \draw[<->] (2.05,-1.2) -- (2.05,-1.6) node[right,midway]{2};
@@ -662,7 +663,7 @@ XOR memories can be used by themselves, however a live value table (LVT) may be 
 
 Previous work used distributed memory \cite{abdelhadi16}. However this work did not use bidirectional XOR ports in their implementation. In an alternate implementation\cite{laforest12}, the live value table was implemented with registers.
 
-We create a LVT memory using the technique described in \cite{choi12}. This live value memory is composed of 2-(full)port memories. Each port shares a RAM with another port. This results in $F(F-1)/2$ RAMs being needed, where $F$ is the number of bi-directional (full) ports. Figure \ref{fig:lvt0} illustrates the implementation for 4 ports.
+We create a LVT memory using the technique described in \cite{choi12}. This LVT memory is composed of 2-(full)port memories. Each port of the LVT memory shares a RAM with another port. This results in $F(F-1)/2$ RAMs being needed, where $F$ is the number of bi-directional (full) ports. Figure \ref{fig:lvt0} illustrates the implementation for 4 ports.
 
 The memory gets its name because it uses multi-port memory to track the most recent stored value (i.e., a live value table). The point of a multi-port memory that requires a multi-port memory is that wide (e.g. 32 bit data) can be stored more efficiently this way, since the live value table is just storing the port numbers. (e.g., In Figure \ref{fig:lvt0} the live value table memory has a width of 2 since there are 4 ports.)
 
@@ -674,14 +675,18 @@ We explore LVT designs with 2 to 32 ports. Although 16 and 32 port designs can f
 more practical because of the high resource usage of XOR and LVT memories at high port counts:
 $F^2$ for XOR and $F(F-1)/2$ for LVT. However, we were able to synthesize a 32 port memory. Higher port counts also had worse timing performance (see Table \ref{tab:syn} and Figure \ref{fig:lvt_frequency}).
 
+Table \ref{tab:syn} shows the varying resources and max frequency of the memory for different numbers of ports.
+
 %TODO: elaborate on table and figures.
 
 To get better timing performance we created a pipelined version of the memory. This memory has major drawbacks: In addition to read delay the memory has write delay. The write delay means write conflicts occur on adjacent clock cycles and not just current clock cycles. However, we achieve better timing performance with this memory (see Table \ref{tab:syn_pipelined} and Figure \ref{fig:lvt_frequency}).
 
-Without write delay an 8 port memory runs at Xmhz (x\% of max). With write delay and pipelining the design runs at Xmhz (x\% of max).
+Table \ref{tab:syn_pipelined} shows the varying resources and max frequency of the memory for different numbers of ports.
+
+Without write delay an 8 port memory runs at 455mhz (63\% of max frequency of the block RAM). With write delay and pipelining the design runs at 625mhz (87\% of max frequency of the block RAM).
 
 \begin{figure}
-  \begin{tikzpicture}
+  \begin{tikzpicture}[yscale=.7]
     \draw[->] (0,0) -- (4.5, 0);
     \draw (0,.1) -- (0, -.1) node[anchor=north] {2};
     \draw (1,.1) -- (1, -.1) node[anchor=north] {4};
@@ -689,27 +694,31 @@ Without write delay an 8 port memory runs at Xmhz (x\% of max). With write delay
     \draw (3,.1) -- (3, -.1) node[anchor=north] {16\footnotemark[1]};
     \draw (4,.1) -- (4, -.1) node[anchor=north] {32\footnotemark[1]};
     %draw y axis
-    \draw[->] (0,0) -- (0, 5.5);
+    \draw[->] (0,0) -- (0, 7.5);
     \draw (1pt, 0) -- (-1pt, 0) node[rotate=45,anchor=south east] {0Mhz};
-    \foreach \y in {1,2,3,4,5}
+    \foreach \y in {1,2,3,4,5,6,7}
       \draw (1pt, \y) -- (-1pt, \y) node[rotate=45,anchor=south east] {\y00Mhz};
     %labels
     \node at (2,-1) {PORTS};
     \node at (-1.5,2) [rotate=90]{FREQUENCY};
     %max frequncy
-    \draw[dashed] (0, 5.44) -- (4, 5.44) node[anchor=west] {544Mhz};
+    \draw[dashed] (0, 7.18) -- (4, 7.18) node[anchor=west] {718Mhz};
     %line graphs
-    \draw (0, 4.55) -- (1, 3.64) -- (2, 2.78) -- (3, 1.46) -- (4, 0.67);
-    \node[fill=blue, draw,label={[rotate=30]right:455Mhz}] at (0,4.55){};
-    \node[fill=blue, draw,label={[rotate=30]right:364Mhz}] at (1,3.64){};
-    \node[fill=blue, draw,label={[rotate=30]right:278Mhz}] at (2,2.78){};
-    \node[fill=blue, draw,label={[rotate=30]right:146Mhz}] at (3,1.46){};
-    \node[fill=blue, draw,label={[rotate=30]right:67Mhz}] at (4,.67){};
+    \draw (0, 5.88) -- (1, 5.56) -- (2, 4.55) -- (3, 2.50) -- (4, 1.27);
+    \node[fill=blue, draw,label={[rotate=30]right:588Mhz}] at (0,5.88){};
+    \node[fill=blue, draw,label={[rotate=30]right:556Mhz}] at (1,5.56){};
+    \node[fill=blue, draw,label={[rotate=30]right:455Mhz}] at (2,4.55){};
+    \node[fill=blue, draw,label={[rotate=30]right:250Mhz}] at (3,2.50){};
+    \node[fill=blue, draw,label={[rotate=30]right:127Mhz}] at (4,1.27){};
     %line graph for pipelnined.
-    \draw (0, 4.76) -- (1, 5.00) -- (2, 4.51) -- (3, 2.84);
-    \node[fill=red, draw, circle,inner sep=2pt,label={[rotate=30]right:476Mhz}] at (0,4.76){};
+    \draw (0, 7.14) -- (1, 6.67) -- (2, 6.25) -- (3, 4.17) -- (4, 2.47);
+    \node[fill=red, draw, circle,inner sep=2pt,label={[rotate=30]right:714Mhz}] at (0,7.14){};
+    \node[fill=red, draw, circle,inner sep=2pt,label={[rotate=30]right:667Mhz}] at (1,6.67){};
+    \node[fill=red, draw, circle,inner sep=2pt,label={[rotate=30]right:625Mhz}] at (2,6.25){};
+    \node[fill=red, draw, circle,inner sep=2pt,label={[rotate=30]right:417Mhz}] at (3,4.17){};
+    \node[fill=red, draw, circle,inner sep=2pt,label={[rotate=30]right:247Mhz}] at (4,2.47){};
   \end{tikzpicture}
-  \caption{Frequency of LVT design.}
+  \caption{Frequency of LVT design. The \protect\tikz{\protect\node[fill=blue, draw]{}}s are the (non-pipelined) LVT memory designs and the \protect\tikz{\protect\node[fill=red, draw, circle,inner sep=2pt]{}}s are the pipelined LVT memory designs.}
   \label{fig:lvt_frequency}
   \Description{A graph showing the frequency of the design for difference port counts.}
 \end{figure}
