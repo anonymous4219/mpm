@@ -288,27 +288,28 @@ We evaluate the architecture's performance and resource utilization, and show th
           \node[] at (1,-1+\y) {\v};
       }
       %draw XORs
-      \node(x0)[inner sep=0pt] at (.5,0){$\oplus$};
+      \node(x0)[inner sep=0pt] at (.4,1.5){$\oplus$};
       \node(x1)[inner sep=0pt] at (1.5,.5){$\oplus$};
       %draw ports
-      \node(p0) at (.5,-.5) {PORT0};
+      \node(p0) at (-.5,1.5) [rotate=90]{PORT0};
       \node(p1) at (-.5,.5) [rotate=90]{PORT1};
       %draw connections
-      \draw[->] (p1) -- (x1) node[pos=.75,fill=white]{1000};
-      \draw[->] (1.25,1) -| (x1);
+      \draw[->] (p1) -- (x1) node[pos=.75,fill=white]{1010};
+      \draw[->] (1.25,1.1) -| (x1);
       \draw (x1) |- (-.3, .45);
-      \draw[->] (-.3, .45) |- (-.25, 0);
-      \draw[->] (.65, .45) |- (.75, 0);
-      \draw[->] (.25, 1) -| (x0);
-      \draw[->] (.25, 0) -- (x0);
-      \draw[->] (x0) -- (p0);
+      \draw[->] (-.3, .45) |- (-.25, 0.1);
+      \draw[->] (.65, .45) |- (.75, 0.1);
+      \draw[->] (p0) -- (x0) node[pos=.5,fill=white]{1000};
+      \draw[->] (.25,-.1) -| (x0);
+      \draw[->] (x0) -| (.5,1.45) -| (-.3, .9) -- (-.25, .9);
+      \draw[->] (.5,1.45) -| (.7, .9) -- (.75, .9);
       % draw emulated ram connections.
-      \node(ep1) at (-.5,2) {PORT1};
-      \draw[->] (ep1) -- (.25,2) node[midway,fill=white]{1000};
-      \node(ep0) at (1.25,2) {PORT0};
-      \draw[->] (.75,2) -- (ep0);
+      \node(ep1) at (-.5,2.1) {PORT1};
+      \draw[->] (ep1) -- (.25,2.1) node[midway,fill=white]{1010};
+      \node(ep0) at (-.5,1.9) {PORT0};
+      \draw[->] (ep0) -- (.25,1.9) node[midway,fill=white]{1000};
     \end{tikzpicture}
-    \caption{The memory on clock cycle 0, where $1000_2$ is written to address 2 from port 1 and $0111_2$ is read from address 2 from port 0.}
+    \caption{The memory on clock cycle 0, where $1000_2$ is written to address 1 from port 0 and $1010_2$ is written to address 3 from port 1.}
 
   \end{subfigure}
   \begin{subfigure}[t]{0.45\textwidth}
@@ -320,7 +321,7 @@ We evaluate the architecture's performance and resource utilization, and show th
       \foreach \j in {-.15,-.05, .05, .15}{
           \draw[] (.25, 2+\j) -- (.75,2+\j);
       }
-      \foreach \i/\v in {0/1101,1/1111,2/1000,3/1000,4/0101}{
+      \foreach \i/\v in {0/1101,1/1000,2/0111,3/1010,4/0101}{
           \FPeval{\x}{.7-\i*.1};
           \FPeval{\y}{2-.2+\i*.1};
           \node[] at (.5,\y) {\v};
@@ -331,7 +332,7 @@ We evaluate the architecture's performance and resource utilization, and show th
       \foreach \j in {-.15,-.05, .05, .15}{
           \draw[] (-.25, 1+\j) -- (.25,1+\j);
       }
-      \foreach \i/\v in {0/1010,1/1111,2/0100,3/1010,4/0100}{
+      \foreach \i/\v in {0/1010,1/1000,2/0100,3/1010,4/0100}{
           \FPeval{\x}{.7-\i*.1};
           \FPeval{\y}{1-.2+\i*.1};
           \node[] at (0,\y) {\v};
@@ -341,7 +342,7 @@ We evaluate the architecture's performance and resource utilization, and show th
       \foreach \j in {-.15,-.05, .05, .15}{
           \draw[] (1-.25, 1+\j) -- (1.25,1+\j);
       }
-      \foreach \i/\v in {0/1010,1/1111,2/0100,3/1010,4/0100}{
+      \foreach \i/\v in {0/1010,1/1000,2/0100,3/1010,4/0100}{
           \FPeval{\y}{1-.2+\i*.1};
           \node[] at (1,\y) {\v};
       }
@@ -350,7 +351,7 @@ We evaluate the architecture's performance and resource utilization, and show th
       \foreach \j in {-.15,-.05, .05, .15}{
           \draw[] (0-.25, 0+\j) -- (0.25,0+\j);
       }
-      \foreach \i/\v in {0/0111,1/0000,2/1100,3/0010,4/0001}{
+      \foreach \i/\v in {0/0111,1/0000,2/0011,3/0000,4/0001}{
           \FPeval{\y}{1-.2+\i*.1};
           \node[] at (0,-1+\y) {\v};
       }
@@ -359,34 +360,33 @@ We evaluate the architecture's performance and resource utilization, and show th
       \foreach \j in {-.15,-.05, .05, .15}{
           \draw[] (1-.25, 0+\j) -- (1.25,0+\j);
       }
-      \foreach \i/\v in {0/0111,1/0000,2/1100,3/0010,4/0001}{
+      \foreach \i/\v in {0/0111,1/0000,2/0011,3/0000,4/0001}{
           \FPeval{\y}{1-.2+\i*.1};
           \node[] at (1,-1+\y) {\v};
       }
       %add ports
       \node(p0) at (.5,-.5) {PORT0};
       % add xors
-      \node(x0)[inner sep=0pt] at (.5,0){$\oplus$};
+      \node(x0)[inner sep=0pt] at (.5,0.1){$\oplus$};
       %add connections
-      \draw[->] (.25, 1) -| (x0);
-      \draw[->] (.25, 0) -- (x0);
+      \draw[->] (.25, 1.1) -| (x0);
+      \draw[->] (.25, .1) -- (x0);
       \draw[->] (x0) -- (p0);
       %add ports
       \node(p1) at (1.5,-.5) {PORT1};
       %add xors
-      \node(x1)[inner sep=0pt] at (1.5,0){$\oplus$};
+      \node(x1)[inner sep=0pt] at (1.5,-.1){$\oplus$};
       %add connections
-      \draw[->] (1.25, 1) -| (x1);
-      \draw[->] (1.25, 0) -- (x1);
+      \draw[->] (1.25, .9) -| (x1);
+      \draw[->] (1.25, -.1) -- (x1);
       \draw[->] (x1) -- (p1);
       %add emulated ports
       \node(ep0) at (1.25, 2.1) {PORT0};
       \node(ep1) at (1.25, 1.9) {PORT1};
-      \draw (.75,2) -- (.9,2);
-      \draw[->] (.9,2) |- (ep0);
-      \draw[->] (.9,2) |- (ep1);
+      \draw[->] (.75,2.1) -- (ep0);
+      \draw[->] (.75,1.9) -- (ep1);
     \end{tikzpicture}
-    \caption{The memory on clock cycle 1, where $1000_2$ is read from address 2 from both ports.}
+    \caption{The memory on clock cycle 1, where $1010_2$ is read from address 3 from port 0 and $1000_2$ is read from address 1 from port 1.}
   \end{subfigure}
   \caption{This shows an XOR memory during 2 clock cycles of operation. The XOR memory has 2 full ports and is constructed from 4 RAMs with 1 read and 1 write port.}
   \label{fig:xor_example}
