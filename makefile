@@ -7,3 +7,7 @@ sim: lvt_sim
 lvt_sim:
 	verilator --binary --top-module lvt_memory_tb lvt_memory_tb.sv lvt_memory.sv xor_distributed_memory.sv dual_port_memory.sv
 	obj_dir/Vlvt_memory_tb
+
+simple_dual_port_memory_wrapper_sim:
+	verilator --binary --top-module simple_dual_port_memory_wrapper_tb simple_dual_port_memory_wrapper_tb.sv simple_dual_port_memory_wrapper.sv simple_dual_port_memory.sv
+	obj_dir/Vsimple_dual_port_memory_wrapper_tb
