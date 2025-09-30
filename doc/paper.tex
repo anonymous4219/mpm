@@ -459,32 +459,32 @@ N_{RAM}=W^2 + 2WF + F^2 + WR + FR - W
 
 Note that this memory requires that all of the RAMs in a row have the same data. Initializing the rams to the same data (e.g., all 0s) is required for the memory to operate properly. This is not an issue in FPGAs since the memory can be initialized to 0. Since rows are written to at the same time, they will remain the same as long as the memories are initially the same.
 
-We provide a second example with Figure \ref{fig:xor_example} showing two clock cycles of operation of an XOR memory with 2 full ports. We use 2 ports for simplicity. This example can be extrapolated to more ports.
+We provide a second example with Figure \ref{fig:xor_example} showing two clock cycles of operation of an XOR memory with 2 full ports. We use 2 ports for simplicity. These examples can be extrapolated to more ports.
 
 \section{Analysis of XOR Memory Performance}
 
 We analyze several configurations of XOR memories in terms of resource usage. Tables \ref{tab:syn_xor_ports} through \ref{tab:syn_xor_bram_ports} present some sample performance characteristics, including usage of look up tables (LUTs), flip-flops (FFs), block RAMs (BRAMs) and the maximum frequency that can be achieved under variations of number of ports and the width and depth of the memory.
 
-Table \ref{tab:syn_xor_ports} shows the varying resources and max frequency of the memory for different numbers of ports. As seen the number of LUTs used for memory is relatively large and particularly large for more ports. We use 2, 4, 8, 16, and 32 ports although there is no limitation for using other port counts (3, 5, 6, 7, etc.).
+Table \ref{tab:syn_xor_ports} shows the varying resources and max frequency of the memory for different numbers of ports. As seen the number of LUTs used for memory is relatively large and particularly large for more ports. We use 2, 4, 8, 16, and 32 ports although there is no limitation for using other port counts (3, 5, 6, 7, etc.). As shown, the resource usage increases quadradically with the number of ports.
 
 Table \ref{tab:syn_xor_width} shows the varying resources and max frequency of the memory for different widths. As expected increasing the width of the memory resulted in a roughly linear increase in resource usage and a decrease in timing performance.
 
 Table \ref{tab:syn_xor_depth} shows the varying resources and max frequency of the memory for different memory depths. Also as expected, increasing the depth of the memory resulted in a roughly linear increase in resource usage and a decrease in timing performance.
 
-Table \ref{tab:syn_xor_bram_ports} shows results from an implementation using block RAMs. This required pipelining and introducing a cycle of write delay. We also changed the block RAM to be write before read to remove the cycle of write delay.
+Table \ref{tab:syn_xor_bram_ports} shows results from an implementation using block RAMs. This required changing the block RAM to be write before read to remove the cycle of write delay. As shown the block RAM usage increases quadratically with the number of ports.
 
 \begin{table}
-  \caption{Synthesis results of XOR memory for different port counts. Each memory has a depth of 1024 and width of 32 bits. To reduce the number of IO ports and fit the design on the FPGA, we used a wrapper for the multi-port memory for designs with 16 ports. The 32 port design used more resources than are available on the FPGA therefore we do not have timing for that design.}
+  \caption{Synthesis results of XOR memory for different port counts. Each memory has a depth of 1024 and width of 32 bits. To reduce the number of IO ports and fit the design on the FPGA, we used a wrapper for the multi-port memory for the design with 16 ports. The 32 port design used more resources than are available on the FPGA therefore we do not have timing for that design.}
   \label{tab:syn_xor_ports}
   \begin{tabular}{llllll}
     \toprule
     Ports & LUTs & \thead{LUTs\\ configured\\ as memory} & FFs & BRAMs & Max Frequency\\
     \midrule
-    2 & 2,706 & 2,304 & 0 & 0 & 625Mhz\\
-    4 & 11,556 & 9,728 & 0 & 0 & 500Mhz\\
-    8 & 48,328 & 39,936 & 0 & 0 & 357Mhz\\
-    16 & 196,640 & 161,792 & 0 & 0 & 150Mhz\\
-    32 & 794,688 & 651,264 & 0 & 0 & N/A\\
+    2 & 2,920 & 2,432 & 0 & 0 & 625Mhz\\
+    4 & 12,496 & 10,496 & 0 & 0 & 500Mhz\\
+    8 & 52,128 & 43,520 & 0 & 0 & 357Mhz\\
+    16 & 212,288 & 177,152 & 0 & 0 & 150Mhz\\
+    32 & 858,752 & 714,752 & 0 & 0 & N/A\\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -496,12 +496,12 @@ Table \ref{tab:syn_xor_bram_ports} shows results from an implementation using bl
     \toprule
     Width & LUTs & \thead{LUTs\\ configured\\ as memory} & FFs & BRAMs & Max Frequency\\
     \midrule
-    1 & 2,032 & 1,920 & 0 & 0 & 526Mhz\\
-    2 & 4,040 & 3,840 & 0 & 0 & 500Mhz\\
-    4 & 8,797 & 7,680 & 0 & 0 & 400Mhz\\
-    8 & 12,140 & 9,984 & 0 & 0 & 385Mhz\\
-    16 & 24,201 & 19,968 & 0 & 0 & 370Mhz\\
-    32 & 48,328 & 39,936 & 0 & 0 & 357Mhz\\
+    1 & 2,168 & 1,920 & 0 & 0 & 526Mhz\\
+    2 & 4,240 & 3,840 & 0 & 0 & 500Mhz\\
+    4 & 7,104 & 5,888 & 0 & 0 & 400Mhz\\
+    8 & 14,048 & 11,776 & 0 & 0 & 385Mhz\\
+    16 & 26,144 & 21,760 & 0 & 0 & 370Mhz\\
+    32 & 52,128 & 43,520 & 0 & 0 & 357Mhz\\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -513,28 +513,28 @@ Table \ref{tab:syn_xor_bram_ports} shows results from an implementation using bl
     \toprule
     Depth & LUTs & \thead{LUTs\\ configured\\ as memory} & FFs & BRAMs & Max Frequency\\
     \midrule
-    32 & 2,016 & 1,248 & 0 & 0 & 588Mhz\\
-    64 & 3,264 & 2,496 & 0 & 0 & 556Mhz\\
-    128 & 6,483 & 4,992 & 0 & 0 & 526Mhz\\
-    256 & 12,565 & 9,984 & 0 & 0 & 476Mhz\\
-    512 & 24,621 & 19,968 & 0 & 0 & 455Mhz\\
-    1,024 & 48,328 & 39,936 & 0 & 0 & 357Mhz\\
+    32 & 2,368 & 1,600 & 0 & 0 & 588Mhz\\
+    64 & 3,488 & 2,720 & 0 & 0 & 556Mhz\\
+    128 & 6,864 & 5,440 & 0 & 0 & 526Mhz\\
+    256 & 13,472 & 10,880 & 0 & 0 & 476Mhz\\
+    512 & 26,576 & 21,760 & 0 & 0 & 455Mhz\\
+    1,024 & 52,128 & 43,520 & 0 & 0 & 357Mhz\\
     \bottomrule
   \end{tabular}
 \end{table}
 
 \begin{table}
-  \caption{Synthesis results of XOR memory with block RAMs for different port counts. Each memory has a depth of 1024 and width of 32 bits.}
+  \caption{Synthesis results of XOR memory with block RAMs for different port counts. Each memory has a depth of 1024 and width of 32 bits. To reduce the number of IO ports and fit the design on the FPGA, we used a wrapper for the multi-port memory for designs with 16 and 32 ports.}
   \label{tab:syn_xor_bram_ports}
   \begin{tabular}{llllll}
     \toprule
     Ports & LUTs & \thead{LUTs\\ configured\\ as memory} & FFs & BRAMs & Max Frequency\\
     \midrule
-    2 & 128 & 0 & 150 & 4 & 625Mhz\\
-    4 & 256 & 0 & 300 & 16 & 476Mhz\\
-    8 & 768 & 0 & 600 & 64 & 370Mhz\\
-    16\footnotemark[1] & 3,072 & 0 & 1,200 & 256 & 263Mhz\\
-    32\footnotemark[1] & 10,240 & 0 & 2,400 & 1024 & 123Mhz\\
+    2 & 144 & 0 & 218 & 4 & 625Mhz\\
+    4 & 512 & 0 & 444 & 16 & 476Mhz\\
+    8 & 1920 & 0 & 920 & 64 & 370Mhz\\
+    16 & 6,656 & 0 & 1,968 & 256 & 263Mhz\\
+    32 & 10,240 & 0 & 2,400 & 1024 & 123Mhz\\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -667,7 +667,7 @@ XOR memories can be used by themselves, but combining a live value table (LVT) w
 
 Previous work used distributed memory \cite{abdelhadi16}. However, that work did not use bidirectional XOR ports in their implementation. In an alternate implementations\cite{laforest12}\cite{choi12}, the live value table was implemented with registers.
 
-We create a LVT memory using the technique described in \cite{choi12}. This LVT memory is composed of bi-directional dual-port memories. Each port of the LVT memory shares a RAM with another port of the LVT memory. This results in $F(F-1)/2$ RAMs being needed, where $F$ is the number of bi-directional (full) ports. This is less than the $F^2$ RAMs needed in the XOR implementation. Figure \ref{fig:lvt0} illustrates the implementation for 4 ports.
+We create a LVT memory using the technique described in \cite{choi12}. This LVT memory is composed of bi-directional dual-port RAMs. Each port of the LVT memory shares a RAM with another port of the LVT memory. This results in $F(F-1)/2$ RAMs being needed, where $F$ is the number of bi-directional (full) ports. This is less than the $F^2$ RAMs needed in the XOR implementation. Figure \ref{fig:lvt0} illustrates the implementation for 4 ports.
 
 The memory gets its name because it uses multi-port memory to track the most recent stored value (i.e., a live value table). The point of a multi-port memory that requires a multi-port memory is that wide (e.g., 32 bit data) can be stored more efficiently this way, since the live value table is just storing the port numbers. (e.g., In Figure \ref{fig:lvt0} the live value table memory has a width of 2 since there are 4 ports.)
 
@@ -726,7 +726,7 @@ Without write delay an 8 port memory runs at 455mhz (63\% of max frequency of th
 \end{figure}
 
 \begin{table}
-  \caption{Synthesis results of LVT design for different port counts. Each memory has a depth of 1,024 and a width of 32 bits. To reduce the number of IO ports and fit the design on the FPGA, we used a wrapper for the multi-port memory for designs with 16 and 32ports.}
+  \caption{Synthesis results of LVT design for different port counts. Each memory has a depth of 1,024 and a width of 32 bits. To reduce the number of IO ports and fit the design on the FPGA, we used a wrapper for the multi-port memory for designs with 16 and 32 ports.}
   \label{tab:syn}
   \begin{tabular}{llllll}
     \toprule
@@ -742,7 +742,7 @@ Without write delay an 8 port memory runs at 455mhz (63\% of max frequency of th
 \end{table}
 
 \begin{table}
-  \caption{Synthesis results of LVT design for different port counts for pipelined design. Each memory has a depth of 1,024 and a width of 32 bits. To reduce the number of IO ports and fit the design on the FPGA, we used a wrapper for the multi-port memory for designs with 16 and 32ports.}
+  \caption{Synthesis results of LVT design for different port counts for pipelined design. Each memory has a depth of 1,024 and a width of 32 bits. To reduce the number of IO ports and fit the design on the FPGA, we used a wrapper for the multi-port memory for designs with 16 and 32 ports.}
   \label{tab:syn_pipelined}
   \begin{tabular}{llllll}
     \toprule
@@ -757,7 +757,9 @@ Without write delay an 8 port memory runs at 455mhz (63\% of max frequency of th
   \end{tabular}
 \end{table}
 \section{Conclusion}
-A combination of XOR and LVT techniques can efficiently create FPGA memories with multiple ports, but at the cost of using more memory space. Depending on the application, committing these RAMs may be the best option when creating a multi-port memory.
+A combination of XOR and LVT techniques can efficiently create FPGA memories with multiple ports, but at the cost of using more memory space. For high bandwidth low-latency applications, committing these RAMs may be the best option when creating a multi-port memory.
+
+To summarize, this paper presents two contributions. First, we generalize XOR memory to support bi-directional ports. Second, we use bidirectional XOR memory to create a LVT memory.
 
 %% The next two lines define the bibliography style to be used, and
 %% the bibliography file.

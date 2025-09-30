@@ -1,6 +1,6 @@
 module xor_distributed_memory #(
   parameter WIDTH = 32,
-  parameter DEPTH = 512,
+  parameter DEPTH = 1024,
   parameter PORTS = 8)(
 
   input clk,
