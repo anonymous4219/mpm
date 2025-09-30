@@ -1,7 +1,7 @@
 module xor_bram_memory_pipelined #(
   parameter WIDTH = 32,
   parameter DEPTH = 1024,
-  parameter PORTS = 2)(
+  parameter PORTS = 32)(
 
   input clk,
   input [$clog2(DEPTH)-1:0]addr[PORTS-1:0],
@@ -51,7 +51,7 @@ module xor_bram_memory_pipelined #(
   generate
     for(gi = 0; gi < PORTS; gi = gi + 1) begin : y_genblock
       for(gj = 0; gj < PORTS; gj = gj + 1) begin : x_genblock
-        simple_dual_port_memory #(WIDTH, DEPTH, 1) gen_ram(clk, addr_buffered[gi], d_buffered[gi] ^ partial_xor_input[gi], en_buffered[gi], addr[gj], ram_output[gi][gj]);
+        simple_dual_port_memory_wrapper #(WIDTH, DEPTH) gen_ram(clk, addr_buffered[gi], d_buffered[gi] ^ partial_xor_input[gi], en_buffered[gi], addr[gj], ram_output[gi][gj]);
       end
     end
   endgenerate
